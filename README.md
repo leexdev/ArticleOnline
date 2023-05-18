@@ -22,7 +22,7 @@ This is a website that introduces articles using ASP.NET MVC. The website presen
 
 __Step 1.__ Clone the repository to your local machine.
 ```
-git clone https://github.com/leexdev/Nhom4_WebBao.git
+git clone https://github.com/leexdev/ArticleOnline.git
 ```
 __Step 2.__ Run the project.
 
