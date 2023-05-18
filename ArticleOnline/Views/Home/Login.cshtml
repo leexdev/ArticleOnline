@@ -1,0 +1,48 @@
+﻿@model ArticleOnline.Models.ArticleManagementModel
+@using ArticleOnline.Helpers
+@using ArticleOnline.Controllers
+
+@{
+    Layout = null;
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>alert("@Html.Raw(TempData["SuccessMessage"] as string)");</script>
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" href="~/Content/css/login.css">
+</head>
+<body>
+    <div class="center">
+        <h1>Đăng nhập</h1>
+        @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <div class="txt_field">
+                @Html.TextBoxFor(m => m.User.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.User.Email, "", new { @class = "text-danger" })
+                <span class="text-danger">@ViewBag.errorEmail</span>
+                @Html.LabelFor(m => m.User.Email)
+            </div>
+
+            <div class="txt_field">
+                @Html.PasswordFor(m => m.User.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.User.Password, "", new { @class = "text-danger" })
+                <span class="text-danger">@ViewBag.errorPassword</span>
+                @Html.LabelFor(m => m.User.Password)
+            </div>
+            <input type="submit" name="submit" class="btn btn-primary" value="Đăng nhập" />
+            <div class="signup_link">
+                Bạn chưa có tài khoản? <a href="@Url.Action("Register", "Home")">Đăng ký</a>
+            </div>
+        }
+    </div>
+</body>
+</html>
+

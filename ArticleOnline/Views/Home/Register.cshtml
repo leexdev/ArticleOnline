@@ -1,0 +1,48 @@
+﻿@model ArticleOnline.Models.ArticleManagementModel
+@using ArticleOnline.Helpers
+@using ArticleOnline.Controllers
+
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Đăng ký</title>
+    <link rel="stylesheet" href="~/Content/css/login.css">
+</head>
+<body>
+    <div class="center">
+        <h1>Đăng ký</h1>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="txt_field">
+                @Html.TextBoxFor(m => m.User.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.User.Email, "", new { @class = "text-danger" })
+                <span class="text-danger">@ViewBag.errorRegister</span>
+                @Html.LabelFor(m => m.User.Email)
+            </div>
+            <div class="txt_field">
+                @Html.PasswordFor(m => m.User.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.User.Password, "", new { @class = "text-danger" })
+                @Html.LabelFor(m => m.User.Password)
+            </div>
+            <div class="txt_field">
+                @Html.PasswordFor(m => m.User.ConfirmPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.User.ConfirmPassword, "", new { @class = "text-danger" })
+                @Html.LabelFor(m => m.User.ConfirmPassword)
+            </div>
+            <input type="submit" name="submit" value="Đăng ký">
+            <div class="signup_link">
+                Bạn đã có tài khoản? <a href="@Url.Action("Login", "Home")">Đăng nhập</a>
+            </div>
+        }
+    </div>
+</body>
+</html>

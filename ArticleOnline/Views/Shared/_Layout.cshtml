@@ -1,0 +1,261 @@
+﻿@model ArticleOnline.Models.ArticleManagementModel
+@using ArticleOnline.Helpers
+@using ArticleOnline.Controllers
+
+@{
+    var currentArticle = ViewBag.CurrentArticle as ArticleOnline.Models.Article;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>@ViewBag.title</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/img/share.png">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="~/Content/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    @Styles.Render("~/bundles/style")
+
+
+</head>
+
+<body>
+    <!-- Topbar Start -->
+    <div class="container-fluid d-none d-lg-block">
+        <div class="row align-items-center bg-white py-3 px-lg-5">
+            <div class="col-lg-4">
+                <a href="@Url.Action("Index", "Home")" class="navbar-brand p-0 d-none d-lg-block">
+                    <h1 class="m-0 display-4 text-uppercase text-primary">Diem<span class="text-secondary font-weight-normal">Tin24h</span></h1>
+                </a>
+            </div>
+            <div class="col-lg-8 text-center text-lg-right">
+                <a href=""><img class="img-fluid" src="~/Content/img/ads.png" alt=""></a>
+            </div>
+        </div>
+    </div>
+    <!-- Topbar End -->
+    <!-- Navbar Start -->
+    <div class="container-fluid p-0" style="z-index: 99; position: sticky; top: 0;">
+        <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-2 py-lg-0 px-lg-5">
+            <a href="@Url.Action("Index", "Home")" class="navbar-brand d-block d-lg-none">
+                <h1 class="m-0 display-4 text-uppercase text-primary">Diem<span class="text-white font-weight-normal">Tin24h</span></h1>
+            </a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-between px-0 px-lg-3" id="navbarCollapse">
+                <div class="navbar-nav mr-auto py-0">
+                    <a href="@Url.Action("Index", "Home")" class="nav-item nav-link active">Trang chủ </a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Thể loại</a>
+                        <div class="dropdown-menu rounded-0 m-0">
+                            @foreach (var item in Model.ListCategory)
+                            {
+                                <a href="@Url.Action("ArticleCategory", "Category", new {id = item.Id})" class="dropdown-item">@item.Name</a>
+                            }
+                        </div>
+                    </div>
+                    <a href="#addArticleModal" class="nav-item nav-link">Gửi tin</a>
+
+                    @* ---------------------------------------------------------------------------------------------*@
+
+                    <div class="modal fade" tabindex="-1" id="addArticleModal" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content" style="width:1000px; left:-50%; top: 100px">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Đăng tin</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.CategoryId)
+                                        <div class="col-md-12">
+                                            @Html.ValidationMessageFor(model => model.Article.CategoryId, "", new { @class = "text-danger" })
+                                            @Html.DropDownListFor(model => model.Article.CategoryId, new SelectList(Model.ListCategory, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="display:inline-block">
+                                        @Html.LabelFor(model => model.Article.Avatar)
+                                        <div class="col-md-5">
+                                            @Html.ValidationMessageFor(model => model.Article.Avatar, "", new { @class = "text-danger" })
+                                            <input type="file" id="ImageUpLoad" name="ImageUpLoad" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Title)
+                                        <div class="col-md-12">
+                                            @Html.ValidationMessageFor(model => model.Article.Title, "", new { @class = "text-danger" })
+                                            @Html.TextAreaFor(model => model.Article.Title, new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Description)
+                                        <div class="col-md-12">
+                                            @Html.ValidationMessageFor(model => model.Article.Description, "", new { @class = "text-danger" })
+                                            @Html.TextAreaFor(model => model.Article.Description, new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Content)
+                                        <div class="col-md-12">
+                                            @Html.ValidationMessageFor(model => model.Article.Content, "", new { @class = "text-danger" })
+                                            <textarea class="form-control ckeditor-content" name="Article.Content" id="inputContent"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy bỏ</button>
+                                        <input type="submit" value="Thêm" class="btn btn-success">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* --------------------------------------------------------------------------------------------  *@
+
+                    <a href="@Url.Action("Index", "Contact")" class="nav-item nav-link">Liên hệ</a>
+                </div>
+                <div class="input-group ml-auto d-lg-flex" style="width: 100%; max-width: 478px;">
+                    <input type="text" class="form-control border-0" placeholder="Tìm kiếm" id="search-input">
+                    <div class="input-group-append">
+                        <button class="input-group-text bg-primary text-dark border-0 px-3" id="btn-search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                        @if (Session["Id"] != null)
+                        {
+                            var role = Session["Role"] as string;
+                            if (role == "admin")
+                            {
+                                <a href="@Url.Action("Index", "Article", new { area = "Admin" })">
+                                    <button class="btn btn-primary ml-2" style="width: 40px; height: 40px">
+                                        <i class="fa fa-user-circle-o text-dark" aria-hidden="true"></i>
+                                    </button>
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("User", "Home")">
+                                    <button class="btn btn-primary ml-2" style="width: 40px; height: 40px">
+                                        <i class="fa fa-user-circle-o text-dark" aria-hidden="true"></i>
+                                    </button>
+                                </a>
+                            }
+                            <a href="@Url.Action("Logout", "Home")">
+                                <button class="btn btn-primary ml-1" style="width: 40px; height: 40px">
+                                    <i class="fa fa-sign-out text-dark" aria-hidden="true"></i>
+                                </button>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="text-dark" href="@Url.Action("Login", "Home")"><button class="btn btn-primary text-dark ml-3">Đăng Nhập</button></a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!-- Navbar End -->
+
+    @RenderBody()
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark pt-5 px-sm-3 px-md-5 mt-5">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <h5 class="mb-2 text-white text-uppercase font-weight-bold">Liên Hệ</h5>
+                <p class="font-weight-medium"><i class="fa fa-map-marker-alt mr-2"></i>Ho Chi Minh City, Viet Nam</p>
+                <p class="font-weight-medium"><i class="fa fa-phone-alt mr-2"></i>+84 337 378 867</p>
+                <p class="font-weight-medium"><i class="fa fa-envelope mr-2"></i>leex.dev@gmail.com</p>
+                <h6 class="mb-2 text-white text-uppercase font-weight-bold">Follow Us</h6>
+                <div class="d-flex justify-content-start mb-2">
+                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <h5 class="mb-2 text-white text-uppercase font-weight-bold">Tin hot</h5>
+                @*@foreach (var item in Model.ListArticle.Where(a => a.PublishDate.Date == DateTime.Today).OrderByDescending(a => a.ViewCount).Take(4))*@
+                @foreach (var item in Model.ListArticle.OrderByDescending(a => a.ViewCount).Take(5))
+                {
+                    if (currentArticle == null || item.Id != currentArticle.Id)
+                    {
+                        <div class="mb-3">
+                            <div class="mb-2">
+                                <p class="text-body m-0"><small>@TimeHelper.FormatTimeAgo(item.PublishDate)</small></p>
+                            </div>
+                            <a class="small text-body text-uppercase font-weight-medium" href="@Url.Action("IncreaseViewCount", "Article", new { id = item.Id })">@item.Title</a>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <h5 class="mb-2 text-white text-uppercase font-weight-bold">Thể loại</h5>
+                <div class="m-n1">
+                    @foreach (var item in Model.ListCategory)
+                    {
+                        <a href="@Url.Action("ArticleCategory", "Category", new { @id = item.Id })" class="btn btn-sm btn-secondary m-1">@item.Name</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-4 px-sm-3 px-md-5" style="background: #111111;">
+        <p class="m-0 text-center">
+            &copy; <a href="#">Copyright 2022 DiemTin24h</a>. All Rights Reserved.
+
+            &copy; Diem Tin 24h giữ bản quyền nội dung trên website này
+        </p>
+    </div>
+    <!-- Footer End -->
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary btn-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/lib/easing/easing.min.js"></script>
+    <script src="~/Content/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="https://kit.fontawesome.com/65f68c2277.js" crossorigin="anonymous"></script>
+
+    <script src="~/Content/plugin/ckeditor/ckeditor.js"></script>
+
+    <!-- Template Javascript -->
+    @Scripts.Render("~/bundles/main")
+    @RenderSection("DoanJS", false);
+
+
+   <script>
+       document.querySelector('.nav-link[href="#addArticleModal"]').addEventListener('click', function () {
+           document.getElementById('addArticleModal').style.display = 'block';
+       });
+
+       document.querySelector('.close').addEventListener('click', function () {
+           document.getElementById('addArticleModal').style.display = 'none';
+       });
+
+
+   </script>
+
+</body>
+
+</html>

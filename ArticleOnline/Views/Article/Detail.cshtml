@@ -1,0 +1,151 @@
+﻿@model ArticleOnline.Models.ArticleManagementModel
+@using ArticleOnline.Helpers
+@using ArticleOnline.Controllers
+@{
+    ViewBag.title = Model.SelectedArticle.Title;
+    var currentArticle = ViewBag.CurrentArticle as ArticleOnline.Models.Article;
+    List<ArticleOnline.Models.Comment> comments = currentArticle.Comments.ToList();
+}
+
+<!-- News With Sidebar Start -->
+<div class="container-fluid">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- News Detail Start -->
+                <div class="position-relative mb-3">
+                    <img class="img-fluid w-100" src="@currentArticle.Avatar" style="object-fit: cover;">
+                    <div class="bg-white border border-top-0 p-4">
+                        <div class="mb-3">
+                            <p class="text-body">@TimeHelper.FormatTimeAgo(Model.SelectedArticle.PublishDate)</p>
+                        </div>
+                        <h1 class="mb-3 text-secondary text-uppercase font-weight-bold">@Model.SelectedArticle.Title</h1>
+                        <p class="dt text-dark mb-3 font-weight-bold">@Model.SelectedArticle.Description</p>
+                        @Html.Raw(Model.SelectedArticle.Content)
+                    </div>
+                    <div class="d-flex justify-content-between bg-white border border-top-0 p-4">
+                        <div class="d-flex align-items-center">
+                            <img class="rounded-circle mr-2" src="@currentArticle.USER.Avatar" width="25" height="25" alt="">
+                            <span>@currentArticle.USER.DisplayName</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="ml-3"><i class="far fa-eye mr-2"></i>@currentArticle.ViewCount</span>
+                            <span class="ml-3"><i class="far fa-comment mr-2"></i>@currentArticle.Comments.Count</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- News Detail End -->
+                <!-- Comment List Start -->
+                <div class="mb-3">
+                    <div class="section-title mb-0">
+                        <h4 class="m-0 text-uppercase font-weight-bold">@currentArticle.Comments.Count bình luận</h4>
+                    </div>
+                    <div class="bg-white border border-top-0 p-4">
+                        @foreach (var item in comments.OrderByDescending(a => a.PublishDate))
+                        {
+                            <div class="media">
+                                <img src="@item.USER.Avatar" alt="Image" class="img-fluid mr-3 mt-1" style="width: 45px;">
+                                <div class="media-body">
+                                    @if (item.USER.Id == currentArticle.USER.Id)
+                                    {
+                                        <h6 class="text-secondary font-weight-bold"><small style="color: red">Tác giả<i class="ml-2" style="color: #31404b">@TimeHelper.FormatTimeAgo(item.PublishDate)</i></small></h6>
+                                        <p>@item.Content</p>
+                                    }
+                                    else
+                                    {
+                                        <h6 class="text-secondary font-weight-bold"><small>@item.USER.DisplayName<i class="ml-2">@TimeHelper.FormatTimeAgo(item.PublishDate)</i></small></h6>
+                                        <p>@item.Content</p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!-- Comment List End -->
+                <!-- Comment Form Start -->
+                <div class="mb-3">
+                    <div class="section-title mb-0">
+                        <h4 class="m-0 text-uppercase font-weight-bold">Bình luận</h4>
+                    </div>
+                    <div class="bg-white border border-top-0 p-4">
+                        <form>
+                            <div class="form-group">
+                                <label for="message">Nội dung *</label>
+                                <textarea id="message" cols="30" rows="5" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group mb-0">
+                                <input type="submit" value="Gửi"
+                                       class="btn btn-primary font-weight-semi-bold py-2 px-3">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- Comment Form End -->
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Social Follow Start -->
+                <div class="mb-3">
+                    <div class="section-title mb-0">
+                        <h4 class="m-0 text-uppercase font-weight-bold">Theo dõi</h4>
+                    </div>
+                    <div class="bg-white border border-top-0 p-3">
+                        <a href="" class="d-block w-100 text-white text-decoration-none mb-3" style="background: #39569E;">
+                            <i class="fab fa-facebook-f text-center py-4 mr-3" style="width: 65px; background: rgba(0, 0, 0, .2);"></i>
+                            <span class="font-weight-medium">12,345 Fans</span>
+                        </a>
+                        <a href="" class="d-block w-100 text-white text-decoration-none mb-3" style="background: #0185AE;">
+                            <i class="fab fa-linkedin-in text-center py-4 mr-3" style="width: 65px; background: rgba(0, 0, 0, .2);"></i>
+                            <span class="font-weight-medium">12,345 Connects</span>
+                        </a>
+                        <a href="" class="d-block w-100 text-white text-decoration-none mb-3" style="background: #C8359D;">
+                            <i class="fab fa-instagram text-center py-4 mr-3" style="width: 65px; background: rgba(0, 0, 0, .2);"></i>
+                            <span class="font-weight-medium">12,345 Followers</span>
+                        </a>
+                        <a href="" class="d-block w-100 text-white text-decoration-none mb-3" style="background: #DC472E;">
+                            <i class="fab fa-youtube text-center py-4 mr-3" style="width: 65px; background: rgba(0, 0, 0, .2);"></i>
+                            <span class="font-weight-medium">12,345 Subscribers</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Social Follow End -->
+                <!-- Ads Start -->
+                <div class="h-auto w-auto">
+                    <div class="bg-white text-center border border-top-0 mb-3">
+                        <a href=""><img class="img-fluid" src="~/Content/img/lazada-xuat-hien-tren-man-hinh-led-3d-dau-tien-tai-viet-nam-quang-ba-su-kien-mua-sam-cuoi-nam-5.jpg" alt=""></a>
+                    </div>
+                    <div class="bg-white text-center border border-top-0 mb-3">
+                        <a href=""><img class="img-fluid" src="~/Content/img/lazada-xuat-hien-tren-man-hinh-led-3d-dau-tien-tai-viet-nam-quang-ba-su-kien-mua-sam-cuoi-nam-5.jpg" alt=""></a>
+                    </div>
+                </div>
+                <!-- Ads End -->
+                <!-- Popular News Start -->
+                <div class="mb-3">
+                    <div class="section-title mb-0">
+                        <h4 class="m-0 text-uppercase font-weight-bold">Tin hot</h4>
+                    </div>
+                    <div class="bg-white border border-top-0 p-3">
+                        @*@foreach (var item in Model.ListArticle.Where(a => a.PublishDate.Date == DateTime.Today).OrderByDescending(a => a.ViewCount).Take(10))*@
+                        @foreach (var item in Model.ListArticle.OrderByDescending(a => a.ViewCount).Take(5))
+                        {
+                            if (item.Id != currentArticle.Id)
+                            {
+                                <div class="d-flex align-items-center bg-white mb-3" style="height: 110px;">
+                                    <img class="img-fluid h-110 w-140" src="@item.Avatar" alt="">
+                                    <div class="w-100 h-100 px-3 d-flex flex-column justify-content-center border border-left-0">
+                                        <div class="mb-2">
+                                            <p class="text-body m-0"><small>@TimeHelper.FormatTimeAgo(item.PublishDate)</small></p>
+                                        </div>
+                                        <a class="h6 m-0 text-secondary text-uppercase font-weight-bold cut-text-3" href="@Url.Action("IncreaseViewCount", "Article", new { id = item.Id })">@item.Title</a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+                <!-- Popular News End -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- News With Sidebar End -->
