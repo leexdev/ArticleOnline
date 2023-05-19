@@ -205,61 +205,30 @@ cutTextDescription3.forEach(cutText => {
     }
 });
 
-let cutTextDescription4 = document.querySelectorAll('.cut-text-4');
-cutTextDescription4.forEach(cutText => {
-    let lineHeight = parseInt(window.getComputedStyle(cutText).lineHeight);
-    let height = cutText.clientHeight;
-    let lineCount = Math.ceil(height / lineHeight) - 1;
-    if (lineCount == 2) {
-        cutText.classList.add("pt-24");
+
+$(document).ready(function () {
+    $(".xp-menubar").on('click', function () {
+        $("#sidebar").toggleClass('active');
+        $("#content").toggleClass('active');
+    });
+
+$('.xp-menubar,.body-overlay').on('click', function () {
+    $("#sidebar,.body-overlay").toggleClass('show-nav');
+    });
+});
+
+document.querySelector('.nav-link[href="#addArticleModal"]').addEventListener('click', function () {
+    document.getElementById('addArticleModal').style.display = 'block';
+});
+
+document.querySelector('.close').addEventListener('click', function () {
+    document.getElementById('addArticleModal').style.display = 'none';
+});
+
+function checkInput() {
+    var searchString = document.getElementById("search-input").value;
+    if (searchString === "") {
+        alert("Vui lòng nhập từ khóa trước khi tìm kiếm");
     }
-    else if (lineCount == 1) {
-        cutText.classList.add("pt-36");
-    }
-    else if (lineCount == 0)
-        cutText.classList.add("pt-45");
 }
-);
-
-function handleSearch() {
-    var searchText = document.getElementById("search-input").value;
-  
-    if (searchText.trim() === "") {
-        alert("Vui lòng nhập từ khóa tìm kiếm trước khi tìm kiếm.");
-      return;
-    }
-  
-    localStorage.setItem("searchText", searchText);
-  
-    window.location.href = "./search.html";
-  }
-  
-  var button = document.getElementById("btn-search");
-  button.addEventListener("click", handleSearch);
-  
-
-  var searchText = localStorage.getItem("searchText");
-
-if (searchText) {
-  var heading = document.getElementById("search-result");
-  heading.textContent = "Kết quả tìm kiếm cho \"" + searchText + "\"";
-} else {
-
-}
-
--
-
-    $(document).ready(function () {
-        $(".xp-menubar").on('click', function () {
-            $("#sidebar").toggleClass('active');
-            $("#content").toggleClass('active');
-        });
-
-    $('.xp-menubar,.body-overlay').on('click', function () {
-        $("#sidebar,.body-overlay").toggleClass('show-nav');
-            });
-
-        });
-
-
 

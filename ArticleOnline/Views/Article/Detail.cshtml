@@ -130,15 +130,17 @@
                         {
                             if (item.Id != currentArticle.Id)
                             {
-                                <div class="d-flex align-items-center bg-white mb-3" style="height: 110px;">
-                                    <img class="img-fluid h-110 w-140" src="@item.Avatar" alt="">
-                                    <div class="w-100 h-100 px-3 d-flex flex-column justify-content-center border border-left-0">
-                                        <div class="mb-2">
-                                            <p class="text-body m-0"><small>@TimeHelper.FormatTimeAgo(item.PublishDate)</small></p>
+                                <a href="@Url.Action("IncreaseViewCount", "Article", new { id = item.Id })">
+                                    <div class="d-flex align-items-center bg-white mb-3" style="height: 110px;">
+                                        <img class="img-fluid h-110 w-140" src="@item.Avatar" alt="">
+                                        <div class="w-100 h-100 px-3 d-flex flex-column justify-content-center border border-left-0">
+                                            <div class="mb-2">
+                                                <p class="text-body m-0"><small>@TimeHelper.FormatTimeAgo(item.PublishDate)</small></p>
+                                            </div>
+                                            <div class="h6 m-0 text-secondary text-uppercase font-weight-bold cut-text-3">@item.Title</div>
                                         </div>
-                                        <a class="h6 m-0 text-secondary text-uppercase font-weight-bold cut-text-3" href="@Url.Action("IncreaseViewCount", "Article", new { id = item.Id })">@item.Title</a>
                                     </div>
-                                </div>
+                                </a>
                             }
                         }
                     </div>

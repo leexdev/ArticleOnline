@@ -22,10 +22,8 @@ namespace ArticleOnline.Controllers
         public ActionResult Detail(Guid id)
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
-            objArticleModel.SelectedArticle = articleService.GetArticles()
-                                                     .Where(n => n.Id == id)
-                                                     .FirstOrDefault();
-            ViewBag.CurrentArticle = CurrentArticle(id);
+            objArticleModel.SelectedArticle = articleService.GetArticle(id);
+            ViewBag.CurrentArticle = articleService.CurrentArticle(id);
             return View(objArticleModel);
         }
 
@@ -39,18 +37,6 @@ namespace ArticleOnline.Controllers
 
             articleService.IncreaseViewCount(article);
             return RedirectToAction("Detail", new { id = article.Id });
-        }
-
-        public Article CurrentArticle(Guid id)
-        {
-            foreach (Article article in articleService.GetArticles())
-            {
-                if (article.Id == id)
-                {
-                    return article;
-                }
-            }
-            return null;
         }
     }
 }

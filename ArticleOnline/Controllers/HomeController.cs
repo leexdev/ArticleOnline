@@ -72,10 +72,13 @@ namespace ArticleOnline.Controllers
                 return View();
             }
         }
-
         [HttpGet]
         public ActionResult Login()
         {
+            // Lưu địa chỉ trang trước đó vào biến session
+            string returnUrl = Request.UrlReferrer?.ToString();
+            Session["returnUrl"] = returnUrl;
+
             return View();
         }
 
@@ -102,10 +105,20 @@ namespace ArticleOnline.Controllers
                 Session["Id"] = data.Id;
                 Session["Role"] = data.Role;
                 TempData["SuccessMessage"] = "Đăng nhập thành công!";
+
+                // Kiểm tra và điều hướng trở lại trang trước đó
+                string returnUrl = (string)Session["returnUrl"];
+                if (!string.IsNullOrEmpty(returnUrl))
+                {
+                    Session.Remove("returnUrl");
+                    return Redirect(returnUrl);
+                }
+
                 return RedirectToAction("Index");
             }
             return View();
         }
+
 
         public ActionResult Logout()
         {

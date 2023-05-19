@@ -1,20 +1,16 @@
 ﻿using ArticleOnline.Controllers;
 using ArticleOnline.Models;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Validation;
-using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 using ArticleOnline.Helpers;
+using System;
 
 namespace ArticleOnline.Service
 {
-    public class ArticleService : DbContext
+    public class ArticleService
     {
         private ArticleManagementSystemEntities db;
 
@@ -50,21 +46,17 @@ namespace ArticleOnline.Service
 
         public List<Article> GetLatestArticles()
         {
-            List<Article> articles = db.Articles.OrderByDescending(a => a.PublishDate).Where(a => !a.Deleted).ToList();
-            return articles;
+            return db.Articles.OrderByDescending(a => a.PublishDate).Where(a => !a.Deleted).ToList();
         }
 
-        public List<Article> GetArticleSearch(string SearchString)
+        public List<Article> GetArticleSearch(string searchString)
         {
             diacriticsHelper diacriticsHelper = new diacriticsHelper();
-            string normalizedSearchString = diacriticsHelper.RemoveDiacritics(SearchString.ToUpper());
+            string normalizedSearchString = diacriticsHelper.RemoveDiacritics(searchString.ToUpper());
 
-            List<Article> articles = db.Articles
-                .ToList()
+            return db.Articles
                 .Where(n => diacriticsHelper.RemoveDiacritics(n.Title.ToUpper()).Contains(normalizedSearchString) && !n.Deleted)
                 .ToList();
-
-            return articles;
         }
 
         public List<Article> GetArticleCategory(Guid id)
@@ -74,20 +66,13 @@ namespace ArticleOnline.Service
 
         public Category CurrentCategory(Guid id)
         {
-            var categories = GetCategories();
-            if (categories != null)
-            {
-                foreach (Category category in categories)
-                {
-                    if (category.Id == id)
-                    {
-                        return category;
-                    }
-                }
-            }
-            return null;
+            return GetCategories().FirstOrDefault(category => category.Id == id);
         }
 
+        public Article CurrentArticle(Guid id)
+        {
+            return GetArticles().FirstOrDefault(article => article.Id == id);
+        }
 
         public void IncreaseViewCount(Article article)
         {
@@ -97,32 +82,33 @@ namespace ArticleOnline.Service
 
         public ArticleManagementModel GetHomeModel()
         {
-            ArticleManagementModel objHomeModel = new ArticleManagementModel();
-            objHomeModel.ListCategory = GetCategories();
-            objHomeModel.ListArticle = GetArticles();
-            objHomeModel.ListArticleAll = GetArticles();
-            objHomeModel.ListUser = GetUsers();
+            ArticleManagementModel objHomeModel = new ArticleManagementModel
+            {
+                ListCategory = GetCategories(),
+                ListArticle = GetArticles(),
+                ListArticleAll = GetArticles(),
+                ListUser = GetUsers()
+            };
             return objHomeModel;
         }
 
         public ArticleManagementModel GetUserModel()
         {
-            ArticleManagementModel objUserModel = new ArticleManagementModel();
-            objUserModel.ListUser = GetUsers();
+            ArticleManagementModel objUserModel = new ArticleManagementModel
+            {
+                ListUser = GetUsers()
+            };
             return objUserModel;
         }
 
-        public List<USER> GetUserSearch(string SearchString)
+        public List<USER> GetUserSearch(string searchString)
         {
             diacriticsHelper diacriticsHelper = new diacriticsHelper();
-            string normalizedSearchString = diacriticsHelper.RemoveDiacritics(SearchString.ToUpper());
+            string normalizedSearchString = diacriticsHelper.RemoveDiacritics(searchString.ToUpper());
 
-            List<USER> uSERs = db.USERs
-                .ToList()
+            return db.USERs
                 .Where(n => diacriticsHelper.RemoveDiacritics(n.Email.ToUpper()).Contains(normalizedSearchString) && !n.Deleted)
                 .ToList();
-
-            return uSERs;
         }
 
         public void AddArticle(Article article)
@@ -130,7 +116,6 @@ namespace ArticleOnline.Service
             db.Articles.Add(article);
             db.Configuration.ValidateOnSaveEnabled = false;
             db.SaveChanges();
-            db.Configuration.ValidateOnSaveEnabled = true;
         }
 
         public void UpdateArticle(Article article)
@@ -154,13 +139,14 @@ namespace ArticleOnline.Service
             db.USERs.Add(_user);
             db.Configuration.ValidateOnSaveEnabled = false;
             db.SaveChanges();
-            db.Configuration.ValidateOnSaveEnabled = true;
         }
+
         public void DeleteCategory(Category category)
         {
             category.Deleted = true;
             db.SaveChanges();
         }
+
         public void DeleteUser(USER user)
         {
             user.Deleted = true;

@@ -6,6 +6,11 @@
     var currentArticle = ViewBag.CurrentArticle as ArticleOnline.Models.Article;
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>alert("@Html.Raw(TempData["SuccessMessage"] as string)");</script>
+}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,7 +75,7 @@
                             }
                         </div>
                     </div>
-                    <a href="#addArticleModal" class="nav-item nav-link">Gửi tin</a>
+                    <a href="#addArticleModal" class="nav-item nav-link" onclick="return checkSession()">Gửi tin</a>
 
                     @* ---------------------------------------------------------------------------------------------*@
 
@@ -138,7 +143,7 @@
                         @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-inline" }))
                         {
                             @Html.TextBox("SearchString", null, new { @class = "form-control", placeholder = "Tìm kiếm", id = "search-input" })
-                            <button class="input-group-text bg-primary text-dark border-0 px-3" id="btn-search">
+                            <button class="input-group-text bg-primary text-dark border-0 px-3" id="btn-search" onclick="checkInput()">
                                 <i class="fa fa-search"></i>
                             </button>
                         }
@@ -245,20 +250,17 @@
     <!-- Template Javascript -->
     @Scripts.Render("~/bundles/main")
     @RenderSection("DoanJS", false);
+    <script>
+    function checkSession() {
+        var id = "@(Session["Id"] ?? "")";
+        if (id === "") {
+            alert("Vui lòng đăng nhập trước!");
+            window.location.href = "@Url.Action("Login", "Home")";
+        }
+        return true;
+    }
+    </script>
 
-
-   <script>
-       document.querySelector('.nav-link[href="#addArticleModal"]').addEventListener('click', function () {
-           document.getElementById('addArticleModal').style.display = 'block';
-       });
-
-       document.querySelector('.close').addEventListener('click', function () {
-           document.getElementById('addArticleModal').style.display = 'none';
-       });
-
-
-   </script>
 
 </body>
-
 </html>

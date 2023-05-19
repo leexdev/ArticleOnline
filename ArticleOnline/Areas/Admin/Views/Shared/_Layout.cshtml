@@ -90,16 +90,14 @@
                             <div class="xp-searchbar">
                                 @using (Html.BeginForm(actionCurrent, controllerCurrent, FormMethod.Get))
                                 {
-                                    <form>
-                                        <div class="input-group">
-                                            @Html.TextBox("SearchString", null , new { @class = "form-control", placeholder = "Tìm kiếm" })
-                                            <div class="input-group-append">
-                                                <button class="btn" type="submit" id="button-addon2">
-                                                    Tìm kiếm
-                                                </button>
-                                            </div>
+                                    <div class="input-group">
+                                        @Html.TextBox("SearchString", null , new { @class = "form-control", placeholder = "Tìm kiếm" })
+                                        <div class="input-group-append">
+                                            <button class="btn" type="submit" id="button-addon2">
+                                                Tìm kiếm
+                                            </button>
                                         </div>
-                                    </form>
+                                    </div>
                                 }
                             </div>
                         </div>

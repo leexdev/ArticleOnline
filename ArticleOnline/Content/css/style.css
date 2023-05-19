@@ -2600,6 +2600,7 @@ textarea.form-control.is-invalid {
 .form-inline {
     display: flex;
     flex-flow: row wrap;
+
 }
 
     .form-inline .form-check {

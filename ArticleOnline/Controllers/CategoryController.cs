@@ -33,7 +33,5 @@ namespace ArticleOnline.Controllers
 
             return View(objArticleModel);
         }
-
-        
     }
 }
