@@ -17,11 +17,14 @@ namespace ArticleOnline.Areas.Admin.Controllers
             articleService = new ArticleService();
         }
 
-
-        public ActionResult Index()
+        public ActionResult Index(string SearchString)
         {
-            ArticleManagementModel objArticleModel = articleService.GetUserModel();
-            return View("Index", objArticleModel);
+            ArticleManagementModel objArticleModel = articleService.GetHomeModel();
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                objArticleModel.ListUser = articleService.GetUserSearch(SearchString);
+            }
+            return View(objArticleModel);
         }
     }
 }

@@ -4,6 +4,8 @@
 
 @{
     ViewBag.Title = "Quản lý người dùng";
+    ViewBag.ActionCurrent = "Index";
+    ViewBag.ControllerCurrent = "User";
 }
 <div class="main-content">
     <div class="row">
@@ -30,11 +32,6 @@
                     <thead>
                         <tr>
                             <th class="text-center">
-                                <span class="custom-checkbox">
-                                    <input type="checkbox" id="selectAll">
-                                    <label for="selectAll"></label>
-                            </th>
-                            <th class="text-center">
                                 @Html.DisplayNameFor(model => model.User.Avatar)
                             </th>
                             <th class="text-center">
@@ -56,11 +53,6 @@
                         @foreach (var item in Model.ListUser)
                         {
                             <tr>
-                                <th>
-                                    <span class="custom-checkbox">
-                                        <input type="checkbox" id="checkbox1" name="option[]" value="1">
-                                        <label for="checkbox1"></label>
-                                </th>
                                 <td class="text-center">
                                     <img src="@Url.Content(item.Avatar)" alt="Avatar" style="width: 120px; height: 110px;">
                                 </td>

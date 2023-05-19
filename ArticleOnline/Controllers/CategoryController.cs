@@ -26,31 +26,14 @@ namespace ArticleOnline.Controllers
         public ActionResult ArticleCategory(Guid id)
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
-            var listArticle = objArticleModel.ListArticle.Where(n => n.CategoryId == id).ToList();
-            objArticleModel.ListContextArticle = listArticle;
+            objArticleModel.ListArticle = articleService.GetArticleCategory(id);
 
-            Category currentCategory = CurrentCategory(id);
-            ViewBag.CurrentCategory = currentCategory;
-            ViewBag.Title = currentCategory.Name;
+            Category currentCategory = articleService.CurrentCategory(id);
+            ViewBag.CurrentCategory = currentCategory.Name;
 
             return View(objArticleModel);
         }
 
-        public Category CurrentCategory(Guid id)
-        {
-            var categories = articleService.GetCategories();
-            if (categories != null)
-            {
-                foreach (Category category in categories)
-                {
-                    if (category.Id == id)
-                    {
-                        return category;
-                    }
-                }
-            }
-            return null;
-        }
-
+        
     }
 }

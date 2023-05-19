@@ -134,11 +134,14 @@
                     <a href="@Url.Action("Index", "Contact")" class="nav-item nav-link">Liên hệ</a>
                 </div>
                 <div class="input-group ml-auto d-lg-flex" style="width: 100%; max-width: 478px;">
-                    <input type="text" class="form-control border-0" placeholder="Tìm kiếm" id="search-input">
                     <div class="input-group-append">
-                        <button class="input-group-text bg-primary text-dark border-0 px-3" id="btn-search">
-                            <i class="fa fa-search"></i>
-                        </button>
+                        @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-inline" }))
+                        {
+                            @Html.TextBox("SearchString", null, new { @class = "form-control", placeholder = "Tìm kiếm", id = "search-input" })
+                            <button class="input-group-text bg-primary text-dark border-0 px-3" id="btn-search">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        }
                         @if (Session["Id"] != null)
                         {
                             var role = Session["Role"] as string;
@@ -187,15 +190,15 @@
                 <p class="font-weight-medium"><i class="fa fa-envelope mr-2"></i>leex.dev@gmail.com</p>
                 <h6 class="mb-2 text-white text-uppercase font-weight-bold">Follow Us</h6>
                 <div class="d-flex justify-content-start mb-2">
-                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="#"><i class="fab fa-instagram"></i></a>
+                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="https://www.facebook.com/leex.dev"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="https://www.linkedin.com/in/l%E1%BB%85-nguy%E1%BB%85n-092194259/"><i class="fab fa-linkedin-in"></i></a>
+                    <a class="btn btn-lg btn-secondary btn-lg-square mr-2" href="https://www.instagram.com/leex.dev/"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 mb-3">
                 <h5 class="mb-2 text-white text-uppercase font-weight-bold">Tin hot</h5>
                 @*@foreach (var item in Model.ListArticle.Where(a => a.PublishDate.Date == DateTime.Today).OrderByDescending(a => a.ViewCount).Take(4))*@
-                @foreach (var item in Model.ListArticle.OrderByDescending(a => a.ViewCount).Take(5))
+                @foreach (var item in Model.ListArticleAll.OrderByDescending(a => a.ViewCount).Take(5))
                 {
                     if (currentArticle == null || item.Id != currentArticle.Id)
                     {

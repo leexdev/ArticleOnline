@@ -67,6 +67,28 @@ namespace ArticleOnline.Service
             return articles;
         }
 
+        public List<Article> GetArticleCategory(Guid id)
+        {
+            return db.Articles.Where(n => n.CategoryId == id && !n.Deleted).ToList();
+        }
+
+        public Category CurrentCategory(Guid id)
+        {
+            var categories = GetCategories();
+            if (categories != null)
+            {
+                foreach (Category category in categories)
+                {
+                    if (category.Id == id)
+                    {
+                        return category;
+                    }
+                }
+            }
+            return null;
+        }
+
+
         public void IncreaseViewCount(Article article)
         {
             article.ViewCount++;

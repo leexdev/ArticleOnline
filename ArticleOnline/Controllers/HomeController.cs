@@ -23,9 +23,15 @@ namespace ArticleOnline.Controllers
             articleService = new ArticleService();
         }
 
-        public ActionResult Index()
+        public ActionResult Index(string SearchString)
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                objArticleModel.ListArticle = articleService.GetArticleSearch(SearchString);
+                objArticleModel.ListArticleAll = articleService.GetArticles();
+                ViewBag.CurrentFilter = SearchString;
+            }
             return View(objArticleModel);
         }
 
