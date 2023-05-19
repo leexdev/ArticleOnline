@@ -253,7 +253,7 @@
     <script>
     function checkSession() {
         var id = "@(Session["Id"] ?? "")";
-        if (id === "") {
+        if (id === "") {s
             alert("Vui lòng đăng nhập trước!");
             window.location.href = "@Url.Action("Login", "Home")";
         }
