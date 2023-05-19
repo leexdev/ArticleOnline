@@ -6,6 +6,8 @@
 @{
     var isArticleActive = ViewContext.RouteData.Values["controller"].ToString() == "Article" && ViewContext.RouteData.Values["action"].ToString() == "Index";
     var isUserActive = ViewContext.RouteData.Values["controller"].ToString() == "User" && ViewContext.RouteData.Values["action"].ToString() == "Index";
+    string actionCurrent = ViewBag.ActionCurrent;
+    string controllerCurrent = ViewBag.ControllerCurrent;
 }
 }
 <!doctype html>
@@ -86,17 +88,19 @@
 
                         <div class="col-md-5 col-lg-3 order-3 order-md-2">
                             <div class="xp-searchbar">
-                                <form>
-                                    <div class="input-group">
-                                        <input type="search" class="form-control"
-                                               placeholder="Search">
-                                        <div class="input-group-append">
-                                            <button class="btn" type="submit" id="button-addon2">
-                                                Go
-                                            </button>
+                                @using (Html.BeginForm(actionCurrent, controllerCurrent, FormMethod.Get))
+                                {
+                                    <form>
+                                        <div class="input-group">
+                                            @Html.TextBox("SearchString", null , new { @class = "form-control", placeholder = "Tìm kiếm" })
+                                            <div class="input-group-append">
+                                                <button class="btn" type="submit" id="button-addon2">
+                                                    Tìm kiếm
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
+                                }
                             </div>
                         </div>
 

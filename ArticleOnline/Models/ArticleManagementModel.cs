@@ -9,6 +9,7 @@ namespace ArticleOnline.Models
     {
         public List<Category> ListCategory { get; set; }
         public List<Article> ListArticle { get; set; }
+        public List<Article> ListArticleAll { get; set; }
         public List<Comment> ListComment { get; set; }
         public List<Advertisement> advertisements { get; set; }
         public List<USER> ListUser { get; set; }

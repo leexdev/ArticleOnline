@@ -23,12 +23,5 @@ namespace ArticleOnline.Areas.Admin.Controllers
             ArticleManagementModel objArticleModel = articleService.GetUserModel();
             return View("Index", objArticleModel);
         }
-
-        //[HttpGet]
-        //public ActionResult Index()
-        //{
-        //    ArticleManagementModel objArticleModel = articleService.GetUserModel();
-        //    return View(objArticleModel);
-        //}
     }
 }

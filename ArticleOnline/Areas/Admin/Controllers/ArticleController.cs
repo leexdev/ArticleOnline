@@ -3,8 +3,10 @@ using ArticleOnline.Service;
 using Microsoft.Ajax.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
@@ -21,14 +23,17 @@ namespace ArticleOnline.Areas.Admin.Controllers
             articleService = new ArticleService();
         }
 
-
-        public ActionResult Index()
+        public ActionResult Index(string SearchString)
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
+            if (!string.IsNullOrEmpty(SearchString))
+            {
+                objArticleModel.ListArticle = articleService.GetArticleSearch(SearchString);
+            }
             return View(objArticleModel);
         }
 
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Article article, HttpPostedFileBase ImageUpLoad)

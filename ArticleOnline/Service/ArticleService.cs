@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using ArticleOnline.Helpers;
 
 namespace ArticleOnline.Service
 {
@@ -24,17 +25,17 @@ namespace ArticleOnline.Service
 
         public List<Category> GetCategories()
         {
-            return db.Categories.Where(category => category.Deleted == false).ToList();
+            return db.Categories.Where(category => !category.Deleted).ToList();
         }
 
         public List<Article> GetArticles()
         {
-            return db.Articles.Where(article => article.Deleted == false).ToList();
+            return db.Articles.Where(article => !article.Deleted).ToList();
         }
 
         public List<USER> GetUsers()
         {
-            return db.USERs.Where(user => user.Deleted == false).ToList();
+            return db.USERs.Where(user => !user.Deleted).ToList();
         }
 
         public List<Comment> GetComments()
@@ -49,7 +50,20 @@ namespace ArticleOnline.Service
 
         public List<Article> GetLatestArticles()
         {
-            List<Article> articles = db.Articles.OrderByDescending(a => a.PublishDate).ToList();
+            List<Article> articles = db.Articles.OrderByDescending(a => a.PublishDate).Where(a => !a.Deleted).ToList();
+            return articles;
+        }
+
+        public List<Article> GetArticleSearch(string SearchString)
+        {
+            diacriticsHelper diacriticsHelper = new diacriticsHelper();
+            string normalizedSearchString = diacriticsHelper.RemoveDiacritics(SearchString.ToUpper());
+
+            List<Article> articles = db.Articles
+                .ToList()
+                .Where(n => diacriticsHelper.RemoveDiacritics(n.Title.ToUpper()).Contains(normalizedSearchString) && !n.Deleted)
+                .ToList();
+
             return articles;
         }
 
@@ -64,6 +78,7 @@ namespace ArticleOnline.Service
             ArticleManagementModel objHomeModel = new ArticleManagementModel();
             objHomeModel.ListCategory = GetCategories();
             objHomeModel.ListArticle = GetArticles();
+            objHomeModel.ListArticleAll = GetArticles();
             objHomeModel.ListUser = GetUsers();
             return objHomeModel;
         }
@@ -73,6 +88,19 @@ namespace ArticleOnline.Service
             ArticleManagementModel objUserModel = new ArticleManagementModel();
             objUserModel.ListUser = GetUsers();
             return objUserModel;
+        }
+
+        public List<USER> GetUserSearch(string SearchString)
+        {
+            diacriticsHelper diacriticsHelper = new diacriticsHelper();
+            string normalizedSearchString = diacriticsHelper.RemoveDiacritics(SearchString.ToUpper());
+
+            List<USER> uSERs = db.USERs
+                .ToList()
+                .Where(n => diacriticsHelper.RemoveDiacritics(n.Email.ToUpper()).Contains(normalizedSearchString) && !n.Deleted)
+                .ToList();
+
+            return uSERs;
         }
 
         public void AddArticle(Article article)
