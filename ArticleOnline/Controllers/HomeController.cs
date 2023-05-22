@@ -3,6 +3,7 @@ using ArticleOnline.Models;
 using ArticleOnline.Service;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.IO;
@@ -160,9 +161,12 @@ namespace ArticleOnline.Controllers
         //}
 
         [HttpGet]
+        [CustomAuthorize(Roles = "admin, user")]
         public ActionResult User()
         {
+            Guid id = Guid.Parse(Session["Id"].ToString());
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
+            objArticleModel.User = articleService.GetUserById(id);
             return View(objArticleModel);
         }
 
@@ -170,29 +174,56 @@ namespace ArticleOnline.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult User(USER User, HttpPostedFileBase ImageUpLoad)
         {
+            ArticleManagementModel objArticleModel = articleService.GetHomeModel();
             Guid id = Guid.Parse(Session["Id"].ToString());
-            var existingUser = articleService.GetUserById(id);
-            if (ImageUpLoad != null)
+            USER user = articleService.GetUserById(id);
+            if (string.IsNullOrEmpty(User.Password))
             {
-                string fileName = Path.GetFileNameWithoutExtension(ImageUpLoad.FileName);
-                string extension = Path.GetExtension(ImageUpLoad.FileName);
-                fileName = fileName + "_" + long.Parse(DateTime.Now.ToString("yyyyMMddhhmmss")) + extension;
-                User.Avatar = "/Content/img/" + fileName;
-                ImageUpLoad.SaveAs(Path.Combine(Server.MapPath("~/Content/img/"), fileName));
+                ModelState.Remove("User.Password");
+                ModelState.Remove("User.ConfirmPassword");
+                if (ImageUpLoad != null)
+                {
+                    string fileName = Path.GetFileNameWithoutExtension(ImageUpLoad.FileName);
+                    string extension = Path.GetExtension(ImageUpLoad.FileName);
+                    fileName = fileName + "_" + long.Parse(DateTime.Now.ToString("yyyyMMddhhmmss")) + extension;
+                    User.Avatar = "/Content/img/" + fileName;
+                    ImageUpLoad.SaveAs(Path.Combine(Server.MapPath("~/Content/img/"), fileName));
+                }
+                else
+                {
+                    User.Avatar = user.Avatar;
+                }
+                User.Password = user.Password;
+                articleService.UpdateUser(User);
+                TempData["SuccessMessage"] = "Thay đổi thông tin thành công!";
+                return RedirectToAction("Index");
             }
             else
             {
-                User.Avatar = existingUser.Avatar;
+                if (ModelState.IsValid)
+                {
+                    if (ImageUpLoad != null)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(ImageUpLoad.FileName);
+                        string extension = Path.GetExtension(ImageUpLoad.FileName);
+                        fileName = fileName + "_" + long.Parse(DateTime.Now.ToString("yyyyMMddhhmmss")) + extension;
+                        User.Avatar = "/Content/img/" + fileName;
+                        ImageUpLoad.SaveAs(Path.Combine(Server.MapPath("~/Content/img/"), fileName));
+                    }
+                    else
+                    {
+                        User.Avatar = user.Avatar;
+                    }
+                    User.Password = articleService.GetMD5(User.Password);
+                    articleService.UpdateUser(User);
+                    objArticleModel.User = articleService.GetUserById(id);
+                    TempData["SuccessMessage"] = "Thay đổi thông tin thành công!";
+                    return RedirectToAction("Index");
+                }
             }
-            User.Id = id;
-            if (string.IsNullOrEmpty(User.Password))
-            {
-                User.Password = existingUser.Password;
-            }
-            articleService.UpdateUser(User);
-            return RedirectToAction("Index");
+            objArticleModel.User = articleService.GetUserById(id);
+            return View(objArticleModel);
         }
-
 
         [HttpPost]
         public ActionResult CreateArticle()

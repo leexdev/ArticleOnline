@@ -240,3 +240,4 @@ $('.modal').click(function (event) {
         $('#addArticleModal').removeClass('show');
     }
 });
+

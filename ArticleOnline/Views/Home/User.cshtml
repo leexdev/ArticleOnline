@@ -7,10 +7,8 @@
 }
 
 <div class="container mt-4" style="background-color:#fff; padding:20px;">
-
     <h2 class="container text-center mt-3">Thông tin cá nhân</h2>
-
-    @using (Html.BeginForm("EditUser", "Home", FormMethod.Post, new { @class = "container", enctype = "multipart/form-data" }))
+    @using (Html.BeginForm(null, null, FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
         @Html.AntiForgeryToken()
         <div class="title-img font-weight-bold">Thay đổi ảnh đại diện</div>
@@ -19,10 +17,10 @@
             <div class="edit-img d-flex justify-content-center">
                 <div class="mt-4">
                     <div class="d-flex justify-content-center">
-                        <img class="img_avatar border" style="object-fit:cover; width: 200px; height: 200px" src="@Model.User.Avatar">
+                        <img id="previewImage" class="img_avatar border" style="object-fit: cover; width: 200px; height: 200px" src="" />
                     </div>
                     <div class="font-weight-bold mt-3 text-dark d-flex justify-content-center">Upload Avatar mới:</div>
-                    <input type="file" class="mt-4 ml-5 ml-lg-5 ml-md-5 ml-sm-5" id="ImageUpLoad" name="ImageUpLoad" />
+                    <input type="file" class="mt-4 ml-5 ml-lg-5 ml-md-5 ml-sm-5 pl-5 pl-lg-5 pl-md-5 pl-sm-5" id="ImageUpLoad" name="ImageUpLoad" />
                 </div>
             </div>
             <div class="s-title font-weight-bold mt-5">Thay đổi thông tin cá nhân </div>
@@ -48,7 +46,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">Nhập mật khẩu mới</label>
                 <div class="col-md-10 mw-100">
-                    @Html.EditorFor(model => model.User.Password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.PasswordFor(model => model.User.Password, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.User.Password, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -56,7 +54,7 @@
             <div class="form-group">
                 <label class="control-label col-md-2">Nhập lại mật khẩu</label>
                 <div class="col-md-10 mw-100">
-                    @Html.EditorFor(model => model.User.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.PasswordFor(model => model.User.ConfirmPassword, new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.User.ConfirmPassword, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -72,5 +70,31 @@
     <div>
         @Html.ActionLink("Trở về", "Index")
     </div>
-
 </div>
+
+@section DoanJS
+{
+    <script>
+        // JavaScript code to preview the uploaded image
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var timestamp = new Date().getTime(); // Thêm thông số ngẫu nhiên vào URL
+                    var imageSrc = e.target.result + '?' + timestamp;
+                    $('#previewImage').attr('src', imageSrc);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+            console.log("previewImage() is called");
+        }
+
+        // Call the previewImage function when the file input changes
+        $(document).ready(function () {
+            $('#ImageUpLoad').change(function () {
+                previewImage(this);
+            });
+        });
+
+    </script>
+} 

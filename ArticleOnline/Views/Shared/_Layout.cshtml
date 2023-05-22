@@ -269,10 +269,26 @@
             e.stopPropagation();
         });
 
-        document.getElementById('addArticleLink').addEventListener('mouseover', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var timestamp = new Date().getTime(); // Thêm thông số ngẫu nhiên vào URL
+                    var imageSrc = e.target.result + '?' + timestamp;
+                    $('#previewImage').attr('src', imageSrc);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+            console.log("previewImage() is called");
+        }
+
+        // Call the previewImage function when the file input changes
+        $(document).ready(function () {
+            $('#ImageUpLoad').change(function () {
+                previewImage(this);
+            });
         });
     </script>
+
 </body>
 </html>
