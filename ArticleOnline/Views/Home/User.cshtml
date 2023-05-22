@@ -6,84 +6,71 @@
     ViewBag.Title = "User";
 }
 
-<h2>User</h2>
+<div class="container mt-4" style="background-color:#fff; padding:20px;">
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
+    <h2 class="container text-center mt-3">Thông tin cá nhân</h2>
 
-    <div class="form-horizontal">
-        <h4>USER</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.User.Id)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.User.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User.Email, "", new { @class = "text-danger" })
+    @using (Html.BeginForm("EditUser", "Home", FormMethod.Post, new { @class = "container", enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="title-img font-weight-bold">Thay đổi ảnh đại diện</div>
+        <div class="form-horizontal pl-8">
+            <hr />
+            <div class="edit-img d-flex justify-content-center">
+                <div class="mt-4">
+                    <div class="d-flex justify-content-center">
+                        <img class="img_avatar border" style="object-fit:cover; width: 200px; height: 200px" src="@Model.User.Avatar">
+                    </div>
+                    <div class="font-weight-bold mt-3 text-dark d-flex justify-content-center">Upload Avatar mới:</div>
+                    <input type="file" class="mt-4 ml-5 ml-lg-5 ml-md-5 ml-sm-5" id="ImageUpLoad" name="ImageUpLoad" />
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.User.Password, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User.Password, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User.Password, "", new { @class = "text-danger" })
+            <div class="s-title font-weight-bold mt-5">Thay đổi thông tin cá nhân </div>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.User.Id)
+            <div class="form-group">
+                @Html.LabelFor(model => model.User.DisplayName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 mw-100">
+                    @Html.EditorFor(model => model.User.DisplayName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.User.DisplayName, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.User.DisplayName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User.DisplayName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User.DisplayName, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.User.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10 mw-100">
+                    @Html.EditorFor(model => model.User.Email, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                    @Html.ValidationMessageFor(model => model.User.Email, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.User.JoinDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User.JoinDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User.JoinDate, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="control-label col-md-2">Nhập mật khẩu mới</label>
+                <div class="col-md-10 mw-100">
+                    @Html.EditorFor(model => model.User.Password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.User.Password, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.User.Avatar, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User.Avatar, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User.Avatar, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <label class="control-label col-md-2">Nhập lại mật khẩu</label>
+                <div class="col-md-10 mw-100">
+                    @Html.EditorFor(model => model.User.ConfirmPassword, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.User.ConfirmPassword, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.User.Role, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.User.Role, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.User.Role, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.User.Deleted, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                <div class="checkbox">
-                    @Html.EditorFor(model => model.User.Deleted)
-                    @Html.ValidationMessageFor(model => model.User.Deleted, "", new { @class = "text-danger" })
+            <div class="form-group d-flex justify-content-center">
+                <div class="col-md-offset-2 btn btn-primary p-0">
+                    <input type="submit" value="Cập nhật" class="btn btn-default text-dark " />
                 </div>
             </div>
         </div>
+    }
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
+    <div>
+        @Html.ActionLink("Trở về", "Index")
     </div>
-}
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>

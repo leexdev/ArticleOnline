@@ -5,11 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Mvc;
 
 namespace ArticleOnline.Controllers
@@ -104,17 +106,23 @@ namespace ArticleOnline.Controllers
                 Session["Email"] = data.Email;
                 Session["Id"] = data.Id;
                 Session["Role"] = data.Role;
+                Session["Avatar"] = data.Avatar;
                 TempData["SuccessMessage"] = "Đăng nhập thành công!";
 
-                // Kiểm tra và điều hướng trở lại trang trước đó
                 string returnUrl = (string)Session["returnUrl"];
                 if (!string.IsNullOrEmpty(returnUrl))
                 {
                     Session.Remove("returnUrl");
+                    if (returnUrl.Contains("Register"))
+                    {
+                        return RedirectToAction("Index");
+                    }
+
                     return Redirect(returnUrl);
                 }
 
                 return RedirectToAction("Index");
+
             }
             return View();
         }
@@ -132,11 +140,59 @@ namespace ArticleOnline.Controllers
             return RedirectToAction("Index", "Article", new { area = "Admin" });
         }
 
+        //[HttpGet]
+        //[CustomAuthorize(Roles = "admin,user")]
+        //public ActionResult User()
+        //{
+        //    ArticleManagementModel objArticleModel = articleService.GetHomeModel();
+        //    if (Session["Email"] != null && Session["Id"] != null)
+        //    {
+        //        string email = Session["Email"].ToString();
+        //        string avatar = Session["Avatar"].ToString();
+        //        if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(avatar))
+        //        {
+        //            objArticleModel.User = new USER();
+        //            objArticleModel.User.Email = email;
+        //            objArticleModel.User.Avatar = avatar;
+        //        }
+        //    }
+        //    return View(objArticleModel);
+        //}
+
+        [HttpGet]
         public ActionResult User()
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
             return View(objArticleModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult User(USER User, HttpPostedFileBase ImageUpLoad)
+        {
+            Guid id = Guid.Parse(Session["Id"].ToString());
+            var existingUser = articleService.GetUserById(id);
+            if (ImageUpLoad != null)
+            {
+                string fileName = Path.GetFileNameWithoutExtension(ImageUpLoad.FileName);
+                string extension = Path.GetExtension(ImageUpLoad.FileName);
+                fileName = fileName + "_" + long.Parse(DateTime.Now.ToString("yyyyMMddhhmmss")) + extension;
+                User.Avatar = "/Content/img/" + fileName;
+                ImageUpLoad.SaveAs(Path.Combine(Server.MapPath("~/Content/img/"), fileName));
+            }
+            else
+            {
+                User.Avatar = existingUser.Avatar;
+            }
+            User.Id = id;
+            if (string.IsNullOrEmpty(User.Password))
+            {
+                User.Password = existingUser.Password;
+            }
+            articleService.UpdateUser(User);
+            return RedirectToAction("Index");
+        }
+
 
         [HttpPost]
         public ActionResult CreateArticle()

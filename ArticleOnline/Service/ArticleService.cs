@@ -55,6 +55,7 @@ namespace ArticleOnline.Service
             string normalizedSearchString = diacriticsHelper.RemoveDiacritics(searchString.ToUpper());
 
             return db.Articles
+                .ToList()
                 .Where(n => diacriticsHelper.RemoveDiacritics(n.Title.ToUpper()).Contains(normalizedSearchString) && !n.Deleted)
                 .ToList();
         }
@@ -87,7 +88,6 @@ namespace ArticleOnline.Service
                 ListCategory = GetCategories(),
                 ListArticle = GetArticles(),
                 ListArticleAll = GetArticles(),
-                ListUser = GetUsers()
             };
             return objHomeModel;
         }
@@ -99,6 +99,11 @@ namespace ArticleOnline.Service
                 ListUser = GetUsers()
             };
             return objUserModel;
+        }
+
+        public USER GetUserById(Guid id)
+        {
+            return GetUsers().FirstOrDefault(user => user.Id == id);
         }
 
         public List<USER> GetUserSearch(string searchString)
@@ -120,9 +125,20 @@ namespace ArticleOnline.Service
 
         public void UpdateArticle(Article article)
         {
-            db.Entry(article).State = EntityState.Modified;
-            db.SaveChanges();
+            var existingArticle = db.Articles.Find(article.Id);
+
+            if (existingArticle != null)
+            {
+                existingArticle.CategoryId = article.CategoryId;
+                existingArticle.Title = article.Title;
+                existingArticle.Description = article.Description;
+                existingArticle.Content = article.Content;
+                existingArticle.Avatar = article.Avatar;
+
+                db.SaveChanges();
+            }
         }
+
 
         public Article GetArticle(Guid id)
         {
@@ -139,6 +155,20 @@ namespace ArticleOnline.Service
             db.USERs.Add(_user);
             db.Configuration.ValidateOnSaveEnabled = false;
             db.SaveChanges();
+        }
+        public void UpdateUser(USER User)
+        {
+            var existingUser = db.USERs.Find(User.Id);
+
+            if (existingUser != null)
+            {
+                existingUser.Avatar = User.Avatar;
+                existingUser.DisplayName = User.DisplayName;
+                existingUser.Password = User.Password;
+
+                db.Configuration.ValidateOnSaveEnabled = false;
+                db.SaveChanges();
+            }
         }
 
         public void DeleteCategory(Category category)

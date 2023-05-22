@@ -217,14 +217,6 @@ $('.xp-menubar,.body-overlay').on('click', function () {
     });
 });
 
-document.querySelector('.nav-link[href="#addArticleModal"]').addEventListener('click', function () {
-    document.getElementById('addArticleModal').style.display = 'block';
-});
-
-document.querySelector('.close').addEventListener('click', function () {
-    document.getElementById('addArticleModal').style.display = 'none';
-});
-
 function checkInput() {
     var searchString = document.getElementById("search-input").value;
     if (searchString === "") {
@@ -232,3 +224,19 @@ function checkInput() {
     }
 }
 
+// Khi nhấp vào liên kết "Gửi tin"
+$('#addArticleLink').click(function () {
+    $('#addArticleModal').modal('show');
+});
+
+// Khi nhấp vào nút "Hủy bỏ" hoặc nút đóng modal
+$('.modal .close, .modal-footer .btn-secondary').click(function () {
+    $('#addArticleModal').removeClass('show');
+});
+
+// Khi nhấp vào màu nền overlay
+$('.modal').click(function (event) {
+    if ($(event.target).closest('.modal-content').length === 0) {
+        $('#addArticleModal').removeClass('show');
+    }
+});

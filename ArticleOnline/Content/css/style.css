@@ -2600,7 +2600,7 @@ textarea.form-control.is-invalid {
 .form-inline {
     display: flex;
     flex-flow: row wrap;
-
+    align-items: center;
 }
 
     .form-inline .form-check {
@@ -2728,7 +2728,6 @@ fieldset:disabled a.btn {
         color: #212529;
         background-color: #d9ad00;
         border-color: #cca300;
-        box-shadow: 0 0 0 0.2rem rgba(222, 179, 6, 0.5);
     }
 
     .btn-primary.disabled,
@@ -2749,7 +2748,7 @@ fieldset:disabled a.btn {
         .btn-primary:not(:disabled):not(.disabled):active:focus,
         .btn-primary:not(:disabled):not(.disabled).active:focus,
         .show > .btn-primary.dropdown-toggle:focus {
-            box-shadow: 0 0 0 0.2rem rgba(222, 179, 6, 0.5);
+            /*box-shadow: 0 0 0 0.2rem rgba(222, 179, 6, 0.5);*/
         }
 
 .btn-secondary {
@@ -6029,7 +6028,6 @@ a.close.disabled {
 }
 
 .modal-backdrop {
-    position: fixed;
     top: 0;
     left: 0;
     z-index: 1040;
@@ -7875,10 +7873,12 @@ button.bg-dark:focus {
 
 .float-left {
     float: left !important;
+    margin-left: 20px;
 }
 
 .float-right {
     float: right !important;
+    margin-right: 50%;
 }
 
 .float-none {
@@ -10930,6 +10930,29 @@ h6,
     padding-bottom: 4.5em;
 }
 
-.modal.active {
-    display: block;
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: -100%;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+    .modal.show {
+        top: 0;
+        transform: translate(0,0);
+    }
+
+.modal-content {
+    transition: all 0.3s ease-in-out;
+    transform:translateY(-20%);
+}
+
+.modal.show .modal-content {
+    opacity: 1;
+    transform: translateY(0);
 }

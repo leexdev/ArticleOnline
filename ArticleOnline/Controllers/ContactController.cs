@@ -19,6 +19,7 @@ namespace ArticleOnline.Controllers
 
         public ActionResult Index()
         {
+            Session["returnUrl"] = Request.Url.ToString();
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
             return View(objArticleModel);
         }

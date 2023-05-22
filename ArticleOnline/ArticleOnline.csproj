@@ -1542,7 +1542,6 @@
     <None Include="packages.config" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Home\Register.cshtml" />
-    <Content Include="Views\Home\User.cshtml" />
     <Content Include="Content\plugin\ckeditor\plugins\scayt\CHANGELOG.md" />
     <Content Include="Content\plugin\ckeditor\plugins\scayt\LICENSE.md" />
     <Content Include="Content\plugin\ckeditor\plugins\scayt\README.md" />
@@ -1559,6 +1558,7 @@
     <Content Include="Content\plugin\ckeditor\skins\moono-lisa\readme.md" />
     <Content Include="Content\plugin\ckfinder\plugins\fileeditor\codemirror\LICENSE" />
     <Content Include="Content\plugin\ckfinder\userfiles\.htaccess" />
+    <Content Include="Views\Home\User.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

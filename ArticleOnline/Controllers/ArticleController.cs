@@ -21,6 +21,7 @@ namespace ArticleOnline.Controllers
 
         public ActionResult Detail(Guid id)
         {
+            Session["returnUrl"] = Request.Url.ToString();
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
             objArticleModel.SelectedArticle = articleService.GetArticle(id);
             ViewBag.CurrentArticle = articleService.CurrentArticle(id);

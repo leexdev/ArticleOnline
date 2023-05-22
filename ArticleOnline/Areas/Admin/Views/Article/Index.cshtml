@@ -181,9 +181,6 @@
                                 </div>
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 @Html.HiddenFor(model => model.Article.Id)
-                                @Html.HiddenFor(model => model.Article.AuthorId)
-                                @Html.HiddenFor(model => model.Article.PublishDate)
-                                @Html.HiddenFor(model => model.Article.ViewCount)
                                 @Html.HiddenFor(model => model.Article.Avatar)
 
                                 <div class="modal-body">

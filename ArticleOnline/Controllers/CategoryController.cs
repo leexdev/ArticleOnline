@@ -19,12 +19,14 @@ namespace ArticleOnline.Controllers
 
         public ActionResult Index()
         {
+            Session["returnUrl"] = Request.Url.ToString();
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
             return View(objArticleModel);
         }
 
         public ActionResult ArticleCategory(Guid id)
         {
+            Session["returnUrl"] = Request.Url.ToString();
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
             objArticleModel.ListArticle = articleService.GetArticleCategory(id);
 

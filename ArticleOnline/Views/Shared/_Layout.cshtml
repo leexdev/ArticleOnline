@@ -67,7 +67,7 @@
                 <div class="navbar-nav mr-auto py-0">
                     <a href="@Url.Action("Index", "Home")" class="nav-item nav-link active">Trang chủ </a>
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Thể loại</a>
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="categoryDropdown">Thể loại</a>
                         <div class="dropdown-menu rounded-0 m-0">
                             @foreach (var item in Model.ListCategory)
                             {
@@ -75,11 +75,11 @@
                             }
                         </div>
                     </div>
-                    <a href="#addArticleModal" class="nav-item nav-link" onclick="return checkSession()">Gửi tin</a>
+                    <a href="#addArticleModal" class="nav-item nav-link" onclick="checkSession()">Gửi tin</a>
 
                     @* ---------------------------------------------------------------------------------------------*@
 
-                    <div class="modal fade" tabindex="-1" id="addArticleModal" role="dialog">
+                    <div class="modal" tabindex="-1" id="addArticleModal" role="dialog">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content" style="width:1000px; left:-50%; top: 100px">
                                 <div class="modal-header">
@@ -138,25 +138,29 @@
 
                     <a href="@Url.Action("Index", "Contact")" class="nav-item nav-link">Liên hệ</a>
                 </div>
-                <div class="input-group ml-auto d-lg-flex" style="width: 100%; max-width: 478px;">
+                <div class="input-group ml-3 ml-md-3 ml-sm-3 d-lg-flex d-md-flex d-sm-flex" style="width: 100%; max-width: 478px;">
                     <div class="input-group-append">
                         @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "form-inline" }))
                         {
-                            @Html.TextBox("SearchString", null, new { @class = "form-control", placeholder = "Tìm kiếm", id = "search-input" })
-                            <button class="input-group-text bg-primary text-dark border-0 px-3" id="btn-search" onclick="checkInput()">
-                                <i class="fa fa-search"></i>
-                            </button>
+                            <div class="d-flex justify-content-center">
+                                @Html.TextBox("SearchString", null, new { @class = "form-control", placeholder = "Tìm kiếm", id = "search-input" })
+                                <button class="input-group-text bg-primary text-dark border-0 px-3 px-lg-3 px-md-3 px-sm-3" id="btn-search" onclick="checkInput()" style="padding: 11px">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
                         }
                         @if (Session["Id"] != null)
                         {
                             var role = Session["Role"] as string;
                             if (role == "admin")
                             {
-                                <a href="@Url.Action("Index", "Article", new { area = "Admin" })">
-                                    <button class="btn btn-primary ml-2" style="width: 40px; height: 40px">
-                                        <i class="fa fa-user-circle-o text-dark" aria-hidden="true"></i>
-                                    </button>
-                                </a>
+                                <div class="nav-item dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle btn btn-primary ml-1 b-0" style="width: 40px; height: 38px; padding: 8px;" data-toggle="dropdown"><i class="fa fa-user-circle-o text-dark" aria-hidden="true"></i></a>
+                                    <div class="dropdown-menu rounded-0 m-0">
+                                        <a href="@Url.Action("User", "Home")" class="dropdown-item"><i class="fa fa-user-circle-o text-dark" aria-hidden="true" style="margin-right: 5px"></i>Thông tin cá nhân</a>
+                                        <a href="@Url.Action("Index", "Article", new {area = "Admin"})" class="dropdown-item"><i class="fa fa-user-circle-o text-dark" aria-hidden="true" style="margin-right: 5px"></i>Admin Dashboard</a>
+                                    </div>
+                                </div>
                             }
                             else
                             {
@@ -167,14 +171,14 @@
                                 </a>
                             }
                             <a href="@Url.Action("Logout", "Home")">
-                                <button class="btn btn-primary ml-1" style="width: 40px; height: 40px">
+                                <button class="btn btn-primary ml-1" style="width: 40px; height: 38px">
                                     <i class="fa fa-sign-out text-dark" aria-hidden="true"></i>
                                 </button>
                             </a>
                         }
                         else
                         {
-                            <a class="text-dark" href="@Url.Action("Login", "Home")"><button class="btn btn-primary text-dark ml-3">Đăng Nhập</button></a>
+                            <a class="text-dark d-block d-md-inline d-sm-inline" href="@Url.Action("Login", "Home")"><button class="btn btn-primary text-dark ml-3">Đăng Nhập</button></a>
                         }
                     </div>
                 </div>
@@ -253,14 +257,22 @@
     <script>
     function checkSession() {
         var id = "@(Session["Id"] ?? "")";
-        if (id === "") {s
+        if (id === "") {
             alert("Vui lòng đăng nhập trước!");
             window.location.href = "@Url.Action("Login", "Home")";
         }
         return true;
-    }
+        }
+
+        document.getElementById('categoryDropdown').addEventListener('mouseover', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        document.getElementById('addArticleLink').addEventListener('mouseover', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
     </script>
-
-
 </body>
 </html>
