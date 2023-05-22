@@ -75,7 +75,7 @@
                             }
                         </div>
                     </div>
-                    <a href="#addArticleModal" class="nav-item nav-link" onclick="checkSession()">Gửi tin</a>
+                    <a href="#addArticleModal" class="nav-item nav-link" onclick="return checkSession()">Gửi tin</a>
 
                     @* ---------------------------------------------------------------------------------------------*@
 
@@ -255,11 +255,17 @@
     @Scripts.Render("~/bundles/main")
     @RenderSection("DoanJS", false);
     <script>
-    function checkSession() {
+        // Thêm biến cờ
+        var shouldShowModal = true;
+
+        function checkSession() {
         var id = "@(Session["Id"] ?? "")";
         if (id === "") {
             alert("Vui lòng đăng nhập trước!");
+            // Gán giá trị của biến cờ thành false trước khi chuyển hướng
+            shouldShowModal = false;
             window.location.href = "@Url.Action("Login", "Home")";
+            return false;
         }
         return true;
         }
@@ -269,26 +275,25 @@
             e.stopPropagation();
         });
 
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var timestamp = new Date().getTime(); // Thêm thông số ngẫu nhiên vào URL
-                    var imageSrc = e.target.result + '?' + timestamp;
-                    $('#previewImage').attr('src', imageSrc);
-                }
-                reader.readAsDataURL(input.files[0]);
+        // Kiểm tra giá trị của biến cờ trước khi hiển thị modal
+        $('.nav-link[href="#addArticleModal"]').click(function () {
+            if (shouldShowModal) {
+                $('#addArticleModal').modal('show');
             }
-            console.log("previewImage() is called");
-        }
-
-        // Call the previewImage function when the file input changes
-        $(document).ready(function () {
-            $('#ImageUpLoad').change(function () {
-                previewImage(this);
-            });
         });
-    </script>
 
+        // Khi nhấp vào nút "Hủy bỏ" hoặc nút đóng modal
+        $('.modal .close, .modal-footer .btn-secondary').click(function () {
+            $('#addArticleModal').removeClass('show');
+        });
+
+        // Khi nhấp vào màu nền overlay
+        $('.modal').click(function (event) {
+            if ($(event.target).closest('.modal-content').length === 0) {
+                $('#addArticleModal').removeClass('show');
+        }
+        });
+
+    </script>
 </body>
 </html>

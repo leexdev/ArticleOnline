@@ -224,20 +224,20 @@ function checkInput() {
     }
 }
 
-// Khi nhấp vào liên kết "Gửi tin"
-$('#addArticleLink').click(function () {
-    $('#addArticleModal').modal('show');
-});
+//// Khi nhấp vào liên kết "Gửi tin"
+//$('.nav-link[href="#addArticleModal"]').click(function () {
+//    $('#addArticleModal').modal('show');
+//});
 
-// Khi nhấp vào nút "Hủy bỏ" hoặc nút đóng modal
-$('.modal .close, .modal-footer .btn-secondary').click(function () {
-    $('#addArticleModal').removeClass('show');
-});
+//// Khi nhấp vào nút "Hủy bỏ" hoặc nút đóng modal
+//$('.modal .close, .modal-footer .btn-secondary').click(function () {
+//    $('#addArticleModal').removeClass('show');
+//});
 
-// Khi nhấp vào màu nền overlay
-$('.modal').click(function (event) {
-    if ($(event.target).closest('.modal-content').length === 0) {
-        $('#addArticleModal').removeClass('show');
-    }
-});
+//// Khi nhấp vào màu nền overlay
+//$('.modal').click(function (event) {
+//    if ($(event.target).closest('.modal-content').length === 0) {
+//        $('#addArticleModal').removeClass('show');
+//    }
+//});
 
