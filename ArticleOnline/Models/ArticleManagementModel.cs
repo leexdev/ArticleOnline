@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PagedList;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,6 +17,7 @@ namespace ArticleOnline.Models
         public Category SelectedCategory { get; set; }
         public Article SelectedArticle { get; set; }
         public Article Article { get; set; }
+        public IPagedList<ArticleManagementModel> PagedArticles { get; set; }
         public Article ArticleDelete { get; set; }
         public List<ArticleOnline.Models.Article> ListContextArticle { get; set; }
         public USER User { get; set; }

@@ -17,7 +17,7 @@
             <div class="edit-img d-flex justify-content-center">
                 <div class="mt-4">
                     <div class="d-flex justify-content-center">
-                        <img id="previewImage" class="img_avatar border" style="object-fit: cover; width: 200px; height: 200px"/>
+                        <img id="previewImage" class="img_avatar border" style="object-fit: cover; width: 200px; height: 200px" src="@Model.User.Avatar"/>
                     </div>
                     <div class="font-weight-bold mt-3 text-dark d-flex justify-content-center">Upload Avatar mới:</div>
                     <input type="file" class="mt-4 ml-5 ml-lg-5 ml-md-5 ml-sm-5 pl-5 pl-lg-5 pl-md-5 pl-sm-5" id="ImageUpLoad" name="ImageUpLoad" />
@@ -71,34 +71,3 @@
         @Html.ActionLink("Trở về", "Index")
     </div>
 </div>
-
-@section DoanJS
-{
-    <script>
-        $(document).ready(function () {
-            // Lắng nghe sự kiện khi người dùng chọn một file ảnh
-            $("#ImageUpLoad").change(function () {
-                var file = this.files[0];
-                var formData = new FormData();
-                formData.append("ImageUpLoad", file);
-
-                // Gửi yêu cầu AJAX để tải lên hình ảnh
-                $.ajax({
-                    url: "/HomeController/UploadImage", // Thay thế "/YourController/UploadImage" bằng đường dẫn đến phương thức xử lý việc tải lên hình ảnh trên máy chủ
-                    type: "POST",
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        // Cập nhật đường dẫn hình ảnh đã tải lên vào thuộc tính src của thẻ <img>
-                        $("#previewImage").attr("src", response.imageUrl);
-                    },
-                    error: function (xhr, status, error) {
-                        // Xử lý lỗi (nếu có)
-                        console.log("Error: " + error);
-                    }
-                });
-            });
-        });
-    </script>
-}

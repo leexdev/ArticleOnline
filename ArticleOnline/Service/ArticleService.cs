@@ -88,8 +88,18 @@ namespace ArticleOnline.Service
                 ListCategory = GetCategories(),
                 ListArticle = GetArticles(),
                 ListArticleAll = GetArticles(),
+                ListUser = GetUsers(),
             };
             return objHomeModel;
+        }
+
+        public ArticleManagementModel GetArticleModel()
+        {
+            ArticleManagementModel objArticleModel = new ArticleManagementModel
+            {
+                ListArticle = GetArticles()
+            };
+            return objArticleModel;
         }
 
         public ArticleManagementModel GetUserModel()

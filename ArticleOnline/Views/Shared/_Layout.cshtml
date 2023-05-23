@@ -243,12 +243,11 @@
     <a href="#" class="btn btn-primary btn-square back-to-top"><i class="fa fa-arrow-up"></i></a>
 
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="~/Content/lib/easing/easing.min.js"></script>
     <script src="~/Content/lib/owlcarousel/owl.carousel.min.js"></script>
     <script src="https://kit.fontawesome.com/65f68c2277.js" crossorigin="anonymous"></script>
-
     <script src="~/Content/plugin/ckeditor/ckeditor.js"></script>
 
     <!-- Template Javascript -->
@@ -262,7 +261,6 @@
         var id = "@(Session["Id"] ?? "")";
         if (id === "") {
             alert("Vui lòng đăng nhập trước!");
-            // Gán giá trị của biến cờ thành false trước khi chuyển hướng
             shouldShowModal = false;
             window.location.href = "@Url.Action("Login", "Home")";
             return false;
@@ -275,19 +273,16 @@
             e.stopPropagation();
         });
 
-        // Kiểm tra giá trị của biến cờ trước khi hiển thị modal
         $('.nav-link[href="#addArticleModal"]').click(function () {
             if (shouldShowModal) {
                 $('#addArticleModal').modal('show');
             }
         });
 
-        // Khi nhấp vào nút "Hủy bỏ" hoặc nút đóng modal
         $('.modal .close, .modal-footer .btn-secondary').click(function () {
             $('#addArticleModal').removeClass('show');
         });
 
-        // Khi nhấp vào màu nền overlay
         $('.modal').click(function (event) {
             if ($(event.target).closest('.modal-content').length === 0) {
                 $('#addArticleModal').removeClass('show');

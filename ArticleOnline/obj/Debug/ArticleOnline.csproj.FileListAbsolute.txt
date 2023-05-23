@@ -81,3 +81,7 @@ E:\ArticleOnline\ArticleOnline\obj\Debug\ArticleOnline.csproj.CoreCompileInputs.
 E:\ArticleOnline\ArticleOnline\obj\Debug\ArticleOnline.csproj.CopyComplete
 E:\ArticleOnline\ArticleOnline\obj\Debug\ArticleOnline.dll
 E:\ArticleOnline\ArticleOnline\obj\Debug\ArticleOnline.pdb
+E:\ArticleOnline\ArticleOnline\bin\PagedList.dll
+E:\ArticleOnline\ArticleOnline\bin\PagedList.Mvc.dll
+E:\ArticleOnline\ArticleOnline\bin\PagedList.xml
+E:\ArticleOnline\ArticleOnline\bin\PagedList.Mvc.xml

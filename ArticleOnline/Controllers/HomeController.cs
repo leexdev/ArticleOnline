@@ -226,33 +226,6 @@ namespace ArticleOnline.Controllers
         }
 
         [HttpPost]
-        public ActionResult UploadImage(HttpPostedFileBase ImageUpLoad)
-        {
-            if (ImageUpLoad != null && ImageUpLoad.ContentLength > 0)
-            {
-                try
-                {
-                    string fileName = Path.GetFileName(ImageUpLoad.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Content/img/"), fileName);
-                    ImageUpLoad.SaveAs(path);
-
-                    // Trả về đường dẫn hình ảnh đã tải lên
-                    string imageUrl = "/Content/img/" + fileName;
-                    return Json(new { imageUrl = imageUrl });
-                }
-                catch (Exception ex)
-                {
-                    // Xử lý lỗi nếu có
-                    return Json(new { error = ex.Message });
-                }
-            }
-
-            // Trường hợp không có hình ảnh được gửi lên
-            return Json(new { error = "No image uploaded" });
-        }
-
-
-        [HttpPost]
         public ActionResult CreateArticle()
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();

@@ -1,11 +1,14 @@
 ﻿using ArticleOnline.Models;
 using ArticleOnline.Service;
 using Microsoft.Ajax.Utilities;
+using PagedList;
+using PagedList.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -22,18 +25,45 @@ namespace ArticleOnline.Areas.Admin.Controllers
         {
             articleService = new ArticleService();
         }
-
-        public ActionResult Index(string SearchString)
+        public ActionResult Index(string currentFilter, string searchString, int? page)
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
-            if (!string.IsNullOrEmpty(SearchString))
+
+            if (searchString != null)
             {
-                objArticleModel.ListArticle = articleService.GetArticleSearch(SearchString);
+                page = 1;
             }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                objArticleModel.ListArticle = articleService.GetArticleSearch(searchString).ToList();
+            }
+            else
+            {
+                objArticleModel.ListArticle = articleService.GetArticles().ToList();
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            int pageSize = 4;
+            int pageNumber = page ?? 1;
+            var pagedArticles = objArticleModel.ListArticle.ToPagedList(pageNumber, pageSize);
+
+            var pagedArticleModels = new StaticPagedList<ArticleManagementModel>(
+                pagedArticles.Select(a => new ArticleManagementModel { /* Copy necessary properties from 'a' to the new 'ArticleManagementModel' object */ }),
+                pagedArticles.GetMetaData()
+            );
+
+            objArticleModel.PagedArticles = pagedArticleModels;
+
             return View(objArticleModel);
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Article article, HttpPostedFileBase ImageUpLoad)
@@ -60,7 +90,7 @@ namespace ArticleOnline.Areas.Admin.Controllers
             }
             else
             {
-                return RedirectToAction("Index");
+                return View("Index");
             }
         }
 

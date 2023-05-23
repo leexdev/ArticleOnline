@@ -8179,7 +8179,7 @@ button.bg-dark:focus {
 .mr-2,
 .mx-2 {
     margin-right: 0.5rem !important;
-    width: auto;
+    width: 25px;
 }
 
 .mb-2,

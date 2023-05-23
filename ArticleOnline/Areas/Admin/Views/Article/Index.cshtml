@@ -1,4 +1,6 @@
-﻿@model ArticleOnline.Models.ArticleManagementModel
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model ArticleOnline.Models.ArticleManagementModel
 @using ArticleOnline.Helpers
 @using ArticleOnline.Controllers
 
@@ -100,16 +102,8 @@
                     </tbody>
                 </table>
                 <div class="clearfix">
-                    <div class="hint-text">Hiển thị <b>5</b> trong số <b>25</b></div>
-                    <ul class="pagination">
-                        <li class="page-item disabled"><a href="#">Trước</a></li>
-                        <li class="page-item "><a href="#" class="page-link">1</a></li>
-                        <li class="page-item "><a href="#" class="page-link">2</a></li>
-                        <li class="page-item active"><a href="#" class="page-link">3</a></li>
-                        <li class="page-item "><a href="#" class="page-link">4</a></li>
-                        <li class="page-item "><a href="#" class="page-link">5</a></li>
-                        <li class="page-item "><a href="#" class="page-link">Sau</a></li>
-                    </ul>
+                    Trang @(Model.PagedArticles.PageCount < Model.PagedArticles.PageNumber ? 0 : Model.PagedArticles.PageNumber) trên @Model.PagedArticles.PageCount
+                    @Html.PagedListPager(Model.PagedArticles, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
                 </div>
 
                 @using (Html.BeginForm("Create", "Article", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -125,43 +119,43 @@
                                     </button>
                                 </div>
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Article.CategoryId)
-                                    <div class="col-md-5">
-                                        @Html.DropDownListFor(model => model.Article.CategoryId, new SelectList(Model.ListCategory, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-control", required = "required" })
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.CategoryId)
+                                        <div class="col-md-5">
+                                            @Html.DropDownListFor(model => model.Article.CategoryId, new SelectList(Model.ListCategory, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-control", required = "required" })
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group d-lg-block d-md-inline d-sm-inline" style="margin-top: -85px; margin-left:50%">
-                                    <label class="d-flex">Ảnh đại diện</label>
-                                    <div class="col-md-5">
-                                        <input type="file" id="ImageUpLoad" class="mb-sm-3" name="ImageUpLoad" required />
+                                    <div class="form-group d-lg-block d-md-inline d-sm-inline" style="margin-top: -85px; margin-left:50%">
+                                        <label class="d-flex">Ảnh đại diện</label>
+                                        <div class="col-md-5">
+                                            <input type="file" id="ImageUpLoad" class="mb-sm-3" name="ImageUpLoad" required />
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Article.Title)
-                                    <div class="col-md-12">
-                                        @Html.TextAreaFor(model => model.Article.Title, new { @class = "form-control", required = "required" })
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Title)
+                                        <div class="col-md-12">
+                                            @Html.TextAreaFor(model => model.Article.Title, new { @class = "form-control", required = "required" })
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Article.Description)
-                                    <div class="col-md-12">
-                                        @Html.TextAreaFor(model => model.Article.Description, new { @class = "form-control", required = "required" })
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Description)
+                                        <div class="col-md-12">
+                                            @Html.TextAreaFor(model => model.Article.Description, new { @class = "form-control", required = "required" })
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Article.Content)
-                                    <div class="col-md-12">
-                                        <textarea class="form-control ckeditor-content" name="Article.Content" id="inputContentCreate"></textarea>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Content)
+                                        <div class="col-md-12">
+                                            <textarea class="form-control ckeditor-content" name="Article.Content" id="inputContentCreate"></textarea>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy bỏ</button>
-                                    <input type="submit" value="Thêm" class="btn btn-success">
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy bỏ</button>
+                                        <input type="submit" value="Thêm" class="btn btn-success">
+                                    </div>
                                 </div>
-                            </div>
                             </div>
                         </div>
                     </div>
