@@ -125,14 +125,17 @@
                         <h4 class="m-0 text-uppercase font-weight-bold">Tin hot</h4>
                     </div>
                     <div class="bg-white border border-top-0 p-3">
+                        @{ 
+                            var counter = 0;
+                        }
                         @*@foreach (var item in Model.ListArticle.Where(a => a.PublishDate.Date == DateTime.Today).OrderByDescending(a => a.ViewCount).Take(10))*@
                         @foreach (var item in Model.ListArticle.OrderByDescending(a => a.ViewCount).Take(5))
                         {
-                            if (item.Id != currentArticle.Id)
+                            if (counter < 5 && item.Id != currentArticle.Id)
                             {
                                 <a href="@Url.Action("IncreaseViewCount", "Article", new { id = item.Id })">
                                     <div class="d-flex align-items-center bg-white mb-3" style="height: 110px;">
-                                        <img class="img-fluid h-110 w-140" src="@item.Avatar" alt="">
+                                        <img class="img-fluid h-110 w-140 h-100 w-100" src="@item.Avatar" alt="">
                                         <div class="w-100 h-100 px-3 d-flex flex-column justify-content-center border border-left-0">
                                             <div class="mb-2">
                                                 <p class="text-body m-0"><small>@TimeHelper.FormatTimeAgo(item.PublishDate)</small></p>

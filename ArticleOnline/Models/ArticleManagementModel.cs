@@ -19,7 +19,6 @@ namespace ArticleOnline.Models
         public Article Article { get; set; }
         public IPagedList<ArticleManagementModel> PagedArticles { get; set; }
         public Article ArticleDelete { get; set; }
-        public List<ArticleOnline.Models.Article> ListContextArticle { get; set; }
         public USER User { get; set; }
     }
 }

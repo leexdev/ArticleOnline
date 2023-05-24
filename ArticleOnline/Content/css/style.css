@@ -555,7 +555,7 @@ mark,
 
 .img-fluid {
     width: 100%;
-    object-fit: cover;
+    object-fit: fill;
 }
 
 .img-227 {
@@ -8080,15 +8080,15 @@ button.bg-dark:focus {
 }
 
 .h-110 {
-    height: 110px !important;
+    max-height: 110px !important;
 }
 
 .w-110 {
-    width: 110px !important;
+    max-width: 110px !important;
 }
 
 .w-140 {
-    width: 140px !important;
+    max-width: 140px !important;
 }
 
 .h-auto {

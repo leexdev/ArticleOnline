@@ -8,7 +8,20 @@
     ViewBag.Title = "Quản lý bài viết";
     ViewBag.ActionCurrent = "Index";
     ViewBag.ControllerCurrent = "Article";
+    //var pager = Html.PagedListPager(Model.PagedArticles, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }), PagedListRenderOptions.ClassicPlusFirstAndLast);
+    var pager = Model.PagedArticles;
+    int totalPages = (int)Math.Ceiling((double)pager.TotalItemCount / pager.PageSize);
+    int maxVisiblePages = 5; // Maximum number of visible page links
+
+    int startPage = Math.Max(1, pager.PageNumber - maxVisiblePages / 2);
+    int endPage = Math.Min(startPage + maxVisiblePages - 1, totalPages);
+
+    if (endPage - startPage + 1 < maxVisiblePages)
+    {
+        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+    }
 }
+
 <div class="main-content">
     <div class="row">
         <div class="col-md-12">
@@ -54,56 +67,88 @@
                     </thead>
 
                     <tbody>
-                        @foreach (var item in Model.ListArticle)
+                        @foreach (var pagedArticle in Model.PagedArticles)
                         {
-                            <tr>
-                                <td class="text-center">
-                                    <img src="@Url.Content(item.Avatar)" alt="Avatar" style="width: 120px; height: 110px;">
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Title)
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Description)
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.USER.DisplayName)
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.Category.Name)
-                                </td>
-                                <td class="text-center">
-                                    @TimeHelper.FormatTimeAgo(item.PublishDate)
-                                </td>
-                                <td class="text-center">
-                                    @Html.DisplayFor(modelItem => item.ViewCount)
-                                </td>
-                                <td class="text-center">
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <div class="mr-2">
-                                            <a href="#updateArticleModal" class="edit" data-toggle="modal" data-id="@item.Id" data-title="@item.Title" data-description="@item.Description" data-content="@item.Content" data-categoryid="@item.Category.Id" data-authorid="@item.AuthorId" data-publishdate="@item.PublishDate" data-viewcount="@item.ViewCount" data-avatar="@item.Avatar">
-                                                <i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i>
-                                            </a>
+                            foreach (var article in pagedArticle.ListArticle)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <img src="@Url.Content(article.Avatar)" alt="Avatar" style="width: 120px; height: 110px;">
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.Title)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.Description)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.USER.DisplayName)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.Category.Name)
+                                    </td>
+                                    <td class="text-center">
+                                        @TimeHelper.FormatTimeAgo(article.PublishDate)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.ViewCount)
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="mr-2">
+                                                <a href="#updateArticleModal" class="edit" data-toggle="modal" data-id="@article.Id" data-title="@article.Title" data-description="@article.Description" data-content="@article.Content" data-categoryid="@article.CategoryId" data-authorid="@article.AuthorId" data-publishdate="@article.PublishDate" data-viewcount="@article.ViewCount" data-avatar="@article.Avatar">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i>
+                                                </a>
+                                            </div>
+                                            <div class="mr-2">
+                                                <a href="@Url.Action("Detail", "Article", new { area = "", id = article.Id })" class="details" data-toggle="tooltip">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Chi tiết">&#xe88e;</i>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a href="#deleteArticleModal" class="delete" data-toggle="modal" data-id="@article.Id">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i>
+                                                </a>
+                                            </div>
                                         </div>
-                                        <div class="mr-2">
-                                            <a href="@Url.Action("Detail", "Article", new { area = "", id = item.Id })" class="details" data-toggle="tooltip">
-                                                <i class="material-icons" data-toggle="tooltip" title="Chi tiết">&#xe88e;</i>
-                                            </a>
-                                        </div>
-                                        <div>
-                                            <a href="#deleteArticleModal" class="delete" data-toggle="modal" data-id="@item.Id">
-                                                <i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            }
                         }
+
                     </tbody>
                 </table>
+
                 <div class="clearfix">
-                    Trang @(Model.PagedArticles.PageCount < Model.PagedArticles.PageNumber ? 0 : Model.PagedArticles.PageNumber) trên @Model.PagedArticles.PageCount
-                    @Html.PagedListPager(Model.PagedArticles, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }))
+                    <div class="hint-text">Hiển thị <b>5</b> trong số <b>@Model.ListArticle.Count</b></div>
+                    <ul class="pagination">
+                        @if (pager.HasPreviousPage)
+                        {
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Đầu</a>
+                            </li>
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = pager.PageNumber - 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Trước</a>
+                            </li>
+                        }
+
+                        @for (int pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+                        {
+                            <li class="page-item @(pager.PageNumber == pageNumber ? "active" : "")">
+                                <a href="@Url.Action("Index", new { page = pageNumber, currentFilter = ViewBag.CurrentFilter })" class="page-link">@pageNumber</a>
+                            </li>
+                        }
+
+                        @if (pager.HasNextPage)
+                        {
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = pager.PageNumber + 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Tiếp</a>
+                            </li>
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = totalPages, currentFilter = ViewBag.CurrentFilter })" class="page-link">Cuối</a>
+                            </li>
+                        }
+                    </ul>
                 </div>
 
                 @using (Html.BeginForm("Create", "Article", FormMethod.Post, new { enctype = "multipart/form-data" }))

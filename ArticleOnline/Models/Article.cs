@@ -45,6 +45,7 @@ namespace ArticleOnline.Models
         [AllowHtml]
         public string Content { get; set; }
 
+        [DisplayName("Tác giả")]
         public System.Guid AuthorId { get; set; }
 
         [Required(ErrorMessage = "Vui lòng chọn danh mục!")]
@@ -53,6 +54,8 @@ namespace ArticleOnline.Models
 
         [DisplayName("Ngày đăng")]
         public System.DateTime PublishDate { get; set; }
+
+        [DisplayName("Số lượt xem")]
         public int ViewCount { get; set; }
         public bool Deleted { get; set; }
     

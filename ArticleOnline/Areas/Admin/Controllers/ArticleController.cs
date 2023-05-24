@@ -1,33 +1,28 @@
 ﻿using ArticleOnline.Models;
 using ArticleOnline.Service;
-using Microsoft.Ajax.Utilities;
 using PagedList;
 using PagedList.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Security;
 
 namespace ArticleOnline.Areas.Admin.Controllers
 {
     public class ArticleController : Controller
     {
-
         private ArticleService articleService;
 
         public ArticleController()
         {
             articleService = new ArticleService();
         }
+
         public ActionResult Index(string currentFilter, string searchString, int? page)
         {
-            ArticleManagementModel objArticleModel = articleService.GetHomeModel();
+            var objArticleModel = articleService.GetHomeModel();
 
             if (searchString != null)
             {
@@ -48,21 +43,32 @@ namespace ArticleOnline.Areas.Admin.Controllers
             }
 
             ViewBag.CurrentFilter = searchString;
-
-            int pageSize = 4;
+            int pageSize = 5;
             int pageNumber = page ?? 1;
-            var pagedArticles = objArticleModel.ListArticle.ToPagedList(pageNumber, pageSize);
-
+            var pagedArticles = objArticleModel.ListArticle.OrderByDescending(a => a.PublishDate).ToPagedList(pageNumber, pageSize);
             var pagedArticleModels = new StaticPagedList<ArticleManagementModel>(
-                pagedArticles.Select(a => new ArticleManagementModel { /* Copy necessary properties from 'a' to the new 'ArticleManagementModel' object */ }),
+                pagedArticles.Select(a => new ArticleManagementModel
+                {
+                    ListArticle = new List<Article> { a }
+                }),
                 pagedArticles.GetMetaData()
             );
-
             objArticleModel.PagedArticles = pagedArticleModels;
-
             return View(objArticleModel);
         }
 
+        [HttpGet]
+        public ActionResult Create(Guid id)
+        {
+            var data = articleService.GetArticle(id);
+
+            var model = new ArticleManagementModel
+            {
+                Article = data
+            };
+
+            return View(model);
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -77,28 +83,32 @@ namespace ArticleOnline.Areas.Admin.Controllers
                 article.Avatar = "/Content/img/" + fileName;
                 ImageUpLoad.SaveAs(Path.Combine(Server.MapPath("~/Content/img/"), fileName));
                 article.PublishDate = DateTime.Now;
-                Guid authorId;
-                if (Session["Id"] != null && Guid.TryParse(Session["Id"].ToString(), out authorId))
+                if (Session["Id"] is Guid authorId)
                 {
                     article.AuthorId = authorId;
                 }
                 articleService.AddArticle(article);
-                List<Article> articles = articleService.GetLatestArticles();
-                ArticleManagementModel objArticleModel = articleService.GetHomeModel();
+                var articles = articleService.GetLatestArticles();
+                var objArticleModel = articleService.GetHomeModel();
                 objArticleModel.ListArticle = articles;
-                return View("Index", objArticleModel);
+                Session["SuccessMessage"] = "Thêm thành công!";
+                return Redirect(Request.UrlReferrer.ToString());
             }
-            else
-            {
-                return View("Index");
-            }
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public ActionResult Delete(Article article)
+        public ActionResult Delete(Guid id)
         {
-            var data = articleService.GetArticle(article.Id);
-            articleService.DeleteArticle(data);
+            var article = articleService.GetArticle(id);
+
+            if (article == null)
+            {
+                return HttpNotFound();
+            }
+
+            articleService.DeleteArticle(article);
             return RedirectToAction("Index");
         }
 
@@ -128,7 +138,8 @@ namespace ArticleOnline.Areas.Admin.Controllers
                 ImageUpLoad.SaveAs(Path.Combine(Server.MapPath("~/Content/img/"), fileName));
             }
             articleService.UpdateArticle(article);
-            return RedirectToAction("Index");
+            Session["SuccessMessage"] = "Sửa thành công!";
+            return Redirect(Request.UrlReferrer.ToString());
         }
     }
 }

@@ -61,7 +61,7 @@ namespace ArticleOnline.Controllers
                     user.JoinDate = DateTime.Now;
                     user.Password = articleService.GetMD5(user.Password);
                     articleService.AddUser(user);
-                    TempData["SuccessMessage"] = "Đăng ký thành công!";
+                    Session["SuccessMessage"] = "Đăng ký thành công!";
                     return RedirectToAction("Login");
                 }
                 else
@@ -108,7 +108,7 @@ namespace ArticleOnline.Controllers
                 Session["Id"] = data.Id;
                 Session["Role"] = data.Role;
                 Session["Avatar"] = data.Avatar;
-                TempData["SuccessMessage"] = "Đăng nhập thành công!";
+                Session["SuccessMessage"] = "Đăng nhập thành công!";
 
                 string returnUrl = (string)Session["returnUrl"];
                 if (!string.IsNullOrEmpty(returnUrl))
@@ -195,7 +195,7 @@ namespace ArticleOnline.Controllers
                 }
                 User.Password = user.Password;
                 articleService.UpdateUser(User);
-                TempData["SuccessMessage"] = "Thay đổi thông tin thành công!";
+                Session["SuccessMessage"] = "Thay đổi thông tin thành công!";
                 return RedirectToAction("Index");
             }
             else
@@ -217,7 +217,7 @@ namespace ArticleOnline.Controllers
                     User.Password = articleService.GetMD5(User.Password);
                     articleService.UpdateUser(User);
                     objArticleModel.User = articleService.GetUserById(id);
-                    TempData["SuccessMessage"] = "Thay đổi thông tin thành công!";
+                    Session["SuccessMessage"] = "Thay đổi thông tin thành công!";
                     return RedirectToAction("Index");
                 }
             }

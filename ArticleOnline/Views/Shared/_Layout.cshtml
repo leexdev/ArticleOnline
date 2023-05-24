@@ -6,9 +6,17 @@
     var currentArticle = ViewBag.CurrentArticle as ArticleOnline.Models.Article;
 }
 
-@if (TempData["SuccessMessage"] != null)
+@if (Session["SuccessMessage"] != null)
 {
-    <script>alert("@Html.Raw(TempData["SuccessMessage"] as string)");</script>
+    var successMessage = Session["SuccessMessage"] as string;
+    Session.Remove("SuccessMessage");
+    <script>
+        var successMessage = "@Html.Raw(successMessage)";
+        alert(successMessage);
+    </script>
+    <script>
+        window.location.href = "@Url.Action("Index", new { timestamp = DateTime.Now.Ticks })";
+    </script>
 }
 
 <!DOCTYPE html>
@@ -207,9 +215,13 @@
             <div class="col-lg-4 col-md-6 mb-3">
                 <h5 class="mb-2 text-white text-uppercase font-weight-bold">Tin hot</h5>
                 @*@foreach (var item in Model.ListArticle.Where(a => a.PublishDate.Date == DateTime.Today).OrderByDescending(a => a.ViewCount).Take(4))*@
-                @foreach (var item in Model.ListArticleAll.OrderByDescending(a => a.ViewCount).Take(5))
+                @{
+                    var counter = 0;
+                }
+
+                @foreach (var item in Model.ListArticleAll.OrderByDescending(a => a.ViewCount))
                 {
-                    if (currentArticle == null || item.Id != currentArticle.Id)
+                    if (counter < 5 && (currentArticle == null || item.Id != currentArticle.Id))
                     {
                         <div class="mb-3">
                             <div class="mb-2">
@@ -217,6 +229,7 @@
                             </div>
                             <a class="small text-body text-uppercase font-weight-medium" href="@Url.Action("IncreaseViewCount", "Article", new { id = item.Id })">@item.Title</a>
                         </div>
+                        counter++;
                     }
                 }
             </div>
