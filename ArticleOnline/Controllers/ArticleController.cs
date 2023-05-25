@@ -2,6 +2,7 @@
 using ArticleOnline.Service;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -38,6 +39,19 @@ namespace ArticleOnline.Controllers
 
             articleService.IncreaseViewCount(article);
             return RedirectToAction("Detail", new { id = article.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Comment comment, Guid articleId)
+        {
+            Guid id = Guid.Parse(Session["Id"].ToString());
+            comment.Id = Guid.NewGuid();
+            comment.AuthorId = id;
+            comment.PublishDate = DateTime.Now;
+            comment.ArticleId = articleId;
+            articleService.AddComment(comment);
+            return Redirect(Request.UrlReferrer.ToString());
         }
     }
 }

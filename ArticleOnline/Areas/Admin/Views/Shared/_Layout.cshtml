@@ -4,6 +4,7 @@
 
 
 @{
+    var isCategoryActive = ViewContext.RouteData.Values["controller"].ToString() == "Category" && ViewContext.RouteData.Values["action"].ToString() == "Index";
     var isArticleActive = ViewContext.RouteData.Values["controller"].ToString() == "Article" && ViewContext.RouteData.Values["action"].ToString() == "Index";
     var isUserActive = ViewContext.RouteData.Values["controller"].ToString() == "User" && ViewContext.RouteData.Values["action"].ToString() == "Index";
     string actionCurrent = ViewBag.ActionCurrent;
@@ -70,6 +71,9 @@
                         <i class="material-icons">grid_on</i>Danh mục
                     </a>
                     <ul class="collapse list-unstyled menu show" id="homeSubmenu6">
+                        <li class="@(isCategoryActive ? "active" : "")">
+                            <a href="@Url.Action("Index", "Category")">Quản lý thể loại</a>
+                        </li>
                         <li class="@(isArticleActive ? "active" : "")">
                             <a href="@Url.Action("Index", "Article")">Quản lý bài viết</a>
                         </li>

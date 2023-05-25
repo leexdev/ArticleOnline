@@ -1,6 +1,7 @@
 ﻿using ArticleOnline.Helpers;
 using ArticleOnline.Models;
 using ArticleOnline.Service;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -26,15 +27,40 @@ namespace ArticleOnline.Controllers
             articleService = new ArticleService();
         }
 
-        public ActionResult Index(string SearchString)
+        public ActionResult Index(string currentFilter, string searchString, int? page)
         {
-            ArticleManagementModel objArticleModel = articleService.GetHomeModel();
-            if (!string.IsNullOrEmpty(SearchString))
+            var objArticleModel = articleService.GetHomeModel();
+
+            if (searchString != null)
             {
-                objArticleModel.ListArticle = articleService.GetArticleSearch(SearchString);
-                objArticleModel.ListArticleAll = articleService.GetArticles();
-                ViewBag.CurrentFilter = SearchString;
+                page = 1;
             }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                objArticleModel.ListArticle = articleService.GetArticleSearch(searchString).ToList();
+            }
+            else
+            {
+                objArticleModel.ListArticle = articleService.GetArticles().ToList();
+            }
+
+            ViewBag.CurrentFilter = searchString;
+            int pageSize = 4;
+            int pageNumber = page ?? 1;
+            var pagedArticles = objArticleModel.ListArticle.OrderByDescending(a => a.PublishDate).ToPagedList(pageNumber, pageSize);
+            var pagedArticleModels = new StaticPagedList<ArticleManagementModel>(
+                pagedArticles.Select(a => new ArticleManagementModel
+                {
+                    ListArticle = new List<Article> { a }
+                }),
+                pagedArticles.GetMetaData()
+            );
+            objArticleModel.PagedArticles = pagedArticleModels;
             return View(objArticleModel);
         }
 
@@ -61,7 +87,7 @@ namespace ArticleOnline.Controllers
                     user.JoinDate = DateTime.Now;
                     user.Password = articleService.GetMD5(user.Password);
                     articleService.AddUser(user);
-                    Session["SuccessMessage"] = "Đăng ký thành công!";
+                    TempData["SuccessMessage"] = "Đăng ký thành công!";
                     return RedirectToAction("Login");
                 }
                 else
@@ -78,7 +104,6 @@ namespace ArticleOnline.Controllers
         [HttpGet]
         public ActionResult Login()
         {
-            // Lưu địa chỉ trang trước đó vào biến session
             string returnUrl = Request.UrlReferrer?.ToString();
             Session["returnUrl"] = returnUrl;
 
@@ -108,7 +133,6 @@ namespace ArticleOnline.Controllers
                 Session["Id"] = data.Id;
                 Session["Role"] = data.Role;
                 Session["Avatar"] = data.Avatar;
-                Session["SuccessMessage"] = "Đăng nhập thành công!";
 
                 string returnUrl = (string)Session["returnUrl"];
                 if (!string.IsNullOrEmpty(returnUrl))
@@ -127,7 +151,6 @@ namespace ArticleOnline.Controllers
             }
             return View();
         }
-
 
         public ActionResult Logout()
         {
@@ -172,6 +195,7 @@ namespace ArticleOnline.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "admin, user")]
         public ActionResult User(USER User, HttpPostedFileBase ImageUpLoad)
         {
             ArticleManagementModel objArticleModel = articleService.GetHomeModel();
@@ -225,11 +249,65 @@ namespace ArticleOnline.Controllers
             return View(objArticleModel);
         }
 
-        [HttpPost]
-        public ActionResult CreateArticle()
+        [HttpGet]
+        [CustomAuthorize(Roles = "admin, user")]
+        public ActionResult Create(Guid id)
         {
-            ArticleManagementModel objArticleModel = articleService.GetHomeModel();
-            return View(objArticleModel);
+            var data = articleService.GetArticle(id);
+
+            var model = new ArticleManagementModel
+            {
+                Article = data
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
+        [CustomAuthorize(Roles = "admin, user")]
+        public ActionResult Create(Article article, HttpPostedFileBase ImageUpLoad)
+        {
+            if (ImageUpLoad != null)
+            {
+                article.Id = Guid.NewGuid();
+                string fileName = Path.GetFileNameWithoutExtension(ImageUpLoad.FileName);
+                string extension = Path.GetExtension(ImageUpLoad.FileName);
+                fileName = fileName + "_" + long.Parse(DateTime.Now.ToString("yyyyMMddhhmmss")) + extension;
+                article.Avatar = "/Content/img/" + fileName;
+                ImageUpLoad.SaveAs(Path.Combine(Server.MapPath("~/Content/img/"), fileName));
+                article.PublishDate = DateTime.Now;
+                if (Session["Id"] is Guid authorId)
+                {
+                    article.AuthorId = authorId;
+                }
+                articleService.AddArticle(article);
+                var articles = articleService.GetLatestArticles();
+                var objArticleModel = articleService.GetHomeModel();
+                objArticleModel.ListArticle = articles;
+                Session["SuccessMessage"] = "Đăng thành công!";
+                return Redirect(Request.UrlReferrer.ToString());
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        [CustomAuthorize(Roles = "admin, user")]
+        public ActionResult UploadImage(HttpPostedFileBase upload)
+        {
+            if (upload != null && upload.ContentLength > 0)
+            {
+                var fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid().ToString("N") + Path.GetExtension(upload.FileName);
+                var imagePath = Path.Combine(Server.MapPath("~/Content/img/"), fileName);
+                upload.SaveAs(imagePath);
+
+                var imageUrl = Url.Content("~/Content/img/" + fileName);
+                return Content("<script>window.parent.CKEDITOR.tools.callFunction(" + Request.QueryString["CKEditorFuncNum"] + ", '" + imageUrl + "');</script>");
+            }
+
+            return HttpNotFound();
         }
     }
 }

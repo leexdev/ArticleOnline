@@ -24,6 +24,22 @@ namespace ArticleOnline.Service
             return db.Categories.Where(category => !category.Deleted).ToList();
         }
 
+        public Category GetCategoryById(Guid id)
+        {
+            return GetCategories().FirstOrDefault(category => category.Id == id);
+        }
+
+        public List<Category> GetCategorySearch(string searchString)
+        {
+            diacriticsHelper diacriticsHelper = new diacriticsHelper();
+            string normalizedSearchString = diacriticsHelper.RemoveDiacritics(searchString.ToUpper());
+
+            return db.Categories
+                .ToList()
+                .Where(n => diacriticsHelper.RemoveDiacritics(n.Name.ToUpper()).Contains(normalizedSearchString) && !n.Deleted)
+                .ToList();
+        }
+
         public List<Article> GetArticles()
         {
             return db.Articles.Where(article => !article.Deleted).ToList();
@@ -33,7 +49,6 @@ namespace ArticleOnline.Service
         {
             return db.USERs.Where(user => !user.Deleted).ToList();
         }
-
         public List<Comment> GetComments()
         {
             return db.Comments.ToList();
@@ -60,6 +75,30 @@ namespace ArticleOnline.Service
                 .ToList();
         }
 
+        public void AddCategory(Category category)
+        {
+            db.Categories.Add(category);
+            db.Configuration.ValidateOnSaveEnabled = false;
+            db.SaveChanges();
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            var existingCategory = db.Categories.Find(category.Id);
+
+            if (existingCategory != null)
+            {
+                existingCategory.Name = category.Name;
+                db.SaveChanges();
+            }
+        }
+
+        public void DeleteCategory(Category category)
+        {
+            category.Deleted = true;
+            db.SaveChanges();
+        }
+
         public List<Article> GetArticleCategory(Guid id)
         {
             return db.Articles.Where(n => n.CategoryId == id && !n.Deleted).ToList();
@@ -78,6 +117,7 @@ namespace ArticleOnline.Service
         public void IncreaseViewCount(Article article)
         {
             article.ViewCount++;
+            db.Configuration.ValidateOnSaveEnabled = false;
             db.SaveChanges();
         }
 
@@ -122,7 +162,8 @@ namespace ArticleOnline.Service
             string normalizedSearchString = diacriticsHelper.RemoveDiacritics(searchString.ToUpper());
 
             return db.USERs
-                .Where(n => diacriticsHelper.RemoveDiacritics(n.Email.ToUpper()).Contains(normalizedSearchString) && !n.Deleted)
+                .ToList()
+                .Where(user => diacriticsHelper.RemoveDiacritics(user.Email.ToUpper()).Contains(normalizedSearchString) && !user.Deleted)
                 .ToList();
         }
 
@@ -148,7 +189,6 @@ namespace ArticleOnline.Service
                 db.SaveChanges();
             }
         }
-
 
         public Article GetArticle(Guid id)
         {
@@ -181,21 +221,44 @@ namespace ArticleOnline.Service
             }
         }
 
-        public void DeleteCategory(Category category)
+        public void UpdateUserAdmin(USER User)
         {
-            category.Deleted = true;
-            db.SaveChanges();
+            var existingUser = db.USERs.Find(User.Id);
+
+            if (existingUser != null)
+            {
+                existingUser.Avatar = User.Avatar;  
+                existingUser.DisplayName = User.DisplayName;
+                existingUser.Role = User.Role;
+
+                db.Configuration.ValidateOnSaveEnabled = false;
+                db.SaveChanges();
+            }
         }
 
         public void DeleteUser(USER user)
         {
-            user.Deleted = true;
-            db.SaveChanges();
+            Guid targetUserId = new Guid("4a7a0469-ea5e-4eb3-8071-79744228d184");
+
+            if (user.Id != targetUserId)
+            {
+                user.Deleted = true;
+                db.Configuration.ValidateOnSaveEnabled = false;
+                db.SaveChanges();
+            }
         }
 
         public void DeleteArticle(Article article)
         {
             article.Deleted = true;
+            db.Configuration.ValidateOnSaveEnabled = false;
+            db.SaveChanges();
+        }
+
+        public void AddComment(Comment comment)
+        {
+            db.Comments.Add(comment);
+            db.Configuration.ValidateOnSaveEnabled = false;
             db.SaveChanges();
         }
 

@@ -20,6 +20,7 @@ namespace ArticleOnline.Areas.Admin.Controllers
             articleService = new ArticleService();
         }
 
+        [CustomAuthorize(Roles = "admin")]
         public ActionResult Index(string currentFilter, string searchString, int? page)
         {
             var objArticleModel = articleService.GetHomeModel();
@@ -58,6 +59,7 @@ namespace ArticleOnline.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [CustomAuthorize(Roles = "admin")]
         public ActionResult Create(Guid id)
         {
             var data = articleService.GetArticle(id);
@@ -72,6 +74,8 @@ namespace ArticleOnline.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ValidateInput(false)]
+        [CustomAuthorize(Roles = "admin")]
         public ActionResult Create(Article article, HttpPostedFileBase ImageUpLoad)
         {
             if (ImageUpLoad != null)
@@ -99,6 +103,7 @@ namespace ArticleOnline.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [CustomAuthorize(Roles = "admin")]
         public ActionResult Delete(Guid id)
         {
             var article = articleService.GetArticle(id);
@@ -113,6 +118,7 @@ namespace ArticleOnline.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [CustomAuthorize(Roles = "admin")]
         public ActionResult Edit(Guid id)
         {
             var data = articleService.GetArticle(id);
@@ -127,6 +133,7 @@ namespace ArticleOnline.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateInput(false)]
+        [CustomAuthorize(Roles = "admin")]
         public ActionResult Edit(Article article, HttpPostedFileBase ImageUpLoad)
         {
             if (ImageUpLoad != null)
@@ -140,6 +147,25 @@ namespace ArticleOnline.Areas.Admin.Controllers
             articleService.UpdateArticle(article);
             Session["SuccessMessage"] = "Sửa thành công!";
             return Redirect(Request.UrlReferrer.ToString());
+        }
+
+        [HttpPost]
+        [CustomAuthorize(Roles = "admin")]
+        public ActionResult UploadImage(HttpPostedFileBase upload)
+        {
+            if (upload != null && upload.ContentLength > 0)
+            {
+                // Tạo tên tập tin duy nhất bằng cách sử dụng thời gian và Guid
+                var fileName = DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid().ToString("N") + Path.GetExtension(upload.FileName);
+                var imagePath = Path.Combine(Server.MapPath("~/Content/img/"), fileName);
+                upload.SaveAs(imagePath);
+
+                // Trả về URL của hình ảnh đã tải lên
+                var imageUrl = Url.Content("~/Content/img/" + fileName);
+                return Content("<script>window.parent.CKEDITOR.tools.callFunction(" + Request.QueryString["CKEditorFuncNum"] + ", '" + imageUrl + "');</script>");
+            }
+
+            return HttpNotFound();
         }
     }
 }

@@ -16,6 +16,8 @@
     int startPage = Math.Max(1, pager.PageNumber - maxVisiblePages / 2);
     int endPage = Math.Min(startPage + maxVisiblePages - 1, totalPages);
 
+    int itemsPerPage = pager.PageSize;
+
     if (endPage - startPage + 1 < maxVisiblePages)
     {
         startPage = Math.Max(1, endPage - maxVisiblePages + 1);
@@ -120,7 +122,7 @@
                 </table>
 
                 <div class="clearfix">
-                    <div class="hint-text">Hiển thị <b>5</b> trong số <b>@Model.ListArticle.Count</b></div>
+                    <div class="hint-text">Hiển thị <b>@Model.PagedArticles.Count</b> trong số <b>@Model.ListArticle.Count</b></div>
                     <ul class="pagination">
                         @if (pager.HasPreviousPage)
                         {
@@ -213,7 +215,7 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Đăng tin</h5>
+                                    <h5 class="modal-title">Sửa tin</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -224,12 +226,12 @@
 
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        @Html.HiddenFor(model => model.Article.CategoryId)
+                                        @Html.LabelFor(model => model.Article.CategoryId)
                                         <div class="col-md-5">
                                             @Html.DropDownListFor(model => model.Article.CategoryId, new SelectList(Model.ListCategory, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-control", required = "required" })
                                         </div>
                                     </div>
-                                    <div class="form-group" style="display:inline-block; margin-top: -85px; margin-left:50%">
+                                    <div class="form-group d-lg-block d-md-inline d-sm-inline" style="margin-top: -85px; margin-left:50%">
                                         @Html.LabelFor(model => model.Article.Avatar)
                                         <div class="col-md-5">
                                             <input type="file" id="ImageUpLoad" name="ImageUpLoad" />
@@ -295,8 +297,16 @@
 @section DoanJS
 {
     <script>
-        CKEDITOR.replace('inputContentEdit')
-        CKEDITOR.replace('inputContentCreate')
+        CKEDITOR.replace('inputContentCreate', {
+            filebrowserUploadUrl: '@Url.Action("UploadImage", "Article", new { area = "Admin" })',
+            filebrowserImageUploadUrl: '@Url.Action("UploadImage", "Article", new { area = "Admin" })'
+        });
+
+        CKEDITOR.replace('inputContentEdit', {
+            filebrowserUploadUrl: '@Url.Action("UploadImage", "Article", new { area = "Admin" })',
+            filebrowserImageUploadUrl: '@Url.Action("UploadImage", "Article", new { area = "Admin" })'
+        });
+
         $(document).ready(function () {
             $('.edit').click(function () {
                 var articleId = $(this).data('id');
@@ -304,19 +314,13 @@
                 var title = $(this).data('title');
                 var description = $(this).data('description');
                 var content = $(this).data('content');
-                var authorId = $(this).data('authorid');
                 var categoryId = $(this).data('categoryid');
-                var publishdate = $(this).data('publishdate');
-                var viewcount = $(this).data('viewcount');
 
                 $('#updateArticleModal #Article_Id').val(articleId);
                 $('#updateArticleModal #Article_Avatar').val(avatar);
                 $('#updateArticleModal #Article_Title').val(title);
                 $('#updateArticleModal #Article_Description').val(description);
-                $('#updateArticleModal #Article_AuthorId').val(authorId);
                 $('#updateArticleModal #Article_CategoryId').val(categoryId);
-                $('#updateArticleModal #Article_PublishDate').val(publishdate);
-                $('#updateArticleModal #Article_ViewCount').val(viewcount);
 
                 CKEDITOR.instances.inputContentEdit.setData(content);
             });

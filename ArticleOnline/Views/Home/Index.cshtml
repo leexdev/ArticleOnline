@@ -5,6 +5,19 @@
 
 @{
     ViewBag.Title = "Trang chủ";
+    var pager = Model.PagedArticles;
+    int totalPages = (int)Math.Ceiling((double)pager.TotalItemCount / pager.PageSize);
+    int maxVisiblePages = 5; // Maximum number of visible page links
+
+    int startPage = Math.Max(1, pager.PageNumber - maxVisiblePages / 2);
+    int endPage = Math.Min(startPage + maxVisiblePages - 1, totalPages);
+
+    int itemsPerPage = pager.PageSize;
+
+    if (endPage - startPage + 1 < maxVisiblePages)
+    {
+        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+    }
 }
 
 <!-- Featured News Slider Start -->
@@ -50,33 +63,68 @@
                             }
                         </div>
                     </div>
-                    @foreach (var item in Model.ListArticle.OrderByDescending(a => a.PublishDate))
+                    @foreach (var pagedArticle in Model.PagedArticles)
                     {
-                        <div class="col-lg-6">
-                            <a href="@Url.Action("IncreaseViewCount", "Article", new { id = item.Id })">
-                                <div class="position-relative mb-3">
-                                    <img class="img-227 w-100" src="@item.Avatar" style="object-fit: cover;">
-                                    <div class="bg-white border border-0 p-4">
-                                        <div class="mb-2">
-                                            <p class="text-body"><small>@TimeHelper.FormatTimeAgo(item.PublishDate)</small></p>
+                        foreach (var article in pagedArticle.ListArticle.OrderByDescending(a => a.PublishDate))
+                        {
+                            <div class="col-lg-6">
+                                <a href="@Url.Action("IncreaseViewCount", "Article", new { id = article.Id })">
+                                    <div class="position-relative mb-3">
+                                        <img class="img-227 w-100" src="@article.Avatar" style="object-fit: cover;">
+                                        <div class="bg-white border border-0 p-4">
+                                            <div class="mb-2">
+                                                <p class="text-body"><small>@TimeHelper.FormatTimeAgo(article.PublishDate)</small></p>
+                                            </div>
+                                            <h1 class="h4 mb-3 text-secondary text-uppercase font-weight-bold cut-text-3">@article.Title</h1>
+                                            <p class="m-0 cut-text-4">@article.Description</p>
                                         </div>
-                                        <h1 class="h4 mb-3 text-secondary text-uppercase font-weight-bold cut-text-3">@item.Title</h1>
-                                        <p class="m-0 cut-text-4">@item.Description</p>
+                                        <div class="d-flex justify-content-between bg-white border border-right-0 border-bottom-0 border-left-0 border-top p-4">
+                                            <div class="d-flex align-items-center">
+                                                <img class="rounded-circle mr-2" src="@article.USER.Avatar" width="25" height="25" alt="">
+                                                <small>@article.USER.DisplayName</small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <small class="ml-3"><i class="far fa-eye mr-2"></i>@article.ViewCount</small>
+                                                <small class="ml-3"><i class="far fa-comment mr-2"></i>@article.Comments.Count</small>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="d-flex justify-content-between bg-white border border-right-0 border-bottom-0 border-left-0 border-top p-4">
-                                        <div class="d-flex align-items-center">
-                                            <img class="rounded-circle mr-2" src="@item.USER.Avatar" width="25" height="25" alt="">
-                                            <small>@item.USER.DisplayName</small>
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <small class="ml-3"><i class="far fa-eye mr-2"></i>@item.ViewCount</small>
-                                            <small class="ml-3"><i class="far fa-comment mr-2"></i>@item.Comments.Count</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+                                </a>
+                            </div>
+                        }
                     }
+
+
+                    @*<div class="clearfix offset-sm-3 offset-md-4 offset-lg-4">
+                        <ul class="pagination">
+                            @if (pager.HasPreviousPage)
+                            {
+                                <li class="page-item">
+                                    <a href="@Url.Action("Index", new { page = 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Đầu</a>
+                                </li>
+                                <li class="page-item">
+                                    <a href="@Url.Action("Index", new { page = pager.PageNumber - 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Trước</a>
+                                </li>
+                            }
+
+                            @for (int pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+                            {
+                                <li class="page-item @(pager.PageNumber == pageNumber ? "active" : "")">
+                                    <a href="@Url.Action("Index", new { page = pageNumber, currentFilter = ViewBag.CurrentFilter })" class="page-link">@pageNumber</a>
+                                </li>
+                            }
+
+                            @if (pager.HasNextPage)
+                            {
+                                <li class="page-item">
+                                    <a href="@Url.Action("Index", new { page = pager.PageNumber + 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Tiếp</a>
+                                </li>
+                                <li class="page-item">
+                                    <a href="@Url.Action("Index", new { page = totalPages, currentFilter = ViewBag.CurrentFilter })" class="page-link">Cuối</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>*@
 
                     <div class="col-lg-12 mb-3">
                         <a href=""><img class="img-fluid w-100" src="~/Content/img/ads-728x90.png" alt=""></a>
@@ -125,6 +173,36 @@
                 <!-- Ads End -->
             </div>
         </div>
+    </div>
+    <div class="clearfix offset-sm-3 offset-md-4 offset-lg-4">
+        <ul class="pagination">
+            @if (pager.HasPreviousPage)
+            {
+                <li class="page-item">
+                    <a href="@Url.Action("Index", new { page = 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Đầu</a>
+                </li>
+                <li class="page-item">
+                    <a href="@Url.Action("Index", new { page = pager.PageNumber - 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Trước</a>
+                </li>
+            }
+
+            @for (int pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+            {
+                <li class="page-item @(pager.PageNumber == pageNumber ? "active" : "")">
+                    <a href="@Url.Action("Index", new { page = pageNumber, currentFilter = ViewBag.CurrentFilter })" class="page-link">@pageNumber</a>
+                </li>
+            }
+
+            @if (pager.HasNextPage)
+            {
+                <li class="page-item">
+                    <a href="@Url.Action("Index", new { page = pager.PageNumber + 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Tiếp</a>
+                </li>
+                <li class="page-item">
+                    <a href="@Url.Action("Index", new { page = totalPages, currentFilter = ViewBag.CurrentFilter })" class="page-link">Cuối</a>
+                </li>
+            }
+        </ul>
     </div>
 </div>
 <!-- News With Sidebar End -->

@@ -85,3 +85,5 @@ E:\ArticleOnline\ArticleOnline\bin\PagedList.dll
 E:\ArticleOnline\ArticleOnline\bin\PagedList.Mvc.dll
 E:\ArticleOnline\ArticleOnline\bin\PagedList.xml
 E:\ArticleOnline\ArticleOnline\bin\PagedList.Mvc.xml
+E:\ArticleOnline\ArticleOnline\bin\CKFinder.dll
+E:\ArticleOnline\ArticleOnline\bin\CKFinder.pdb
