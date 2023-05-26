@@ -165,8 +165,8 @@
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle btn btn-primary ml-1 b-0" style="width: 40px; height: 38px; padding: 8px;" data-toggle="dropdown"><i class="fa fa-user-circle-o text-dark" aria-hidden="true"></i></a>
                                     <div class="dropdown-menu rounded-0 m-0">
-                                        <a href="@Url.Action("User", "Home")" class="dropdown-item"><i class="fa fa-user-circle-o text-dark" aria-hidden="true" style="margin-right: 5px"></i>Thông tin cá nhân</a>
-                                        <a href="@Url.Action("Index", "Article", new {area = "Admin"})" class="dropdown-item"><i class="fa fa-user-circle-o text-dark" aria-hidden="true" style="margin-right: 5px"></i>Admin Dashboard</a>
+                                        <a href="@Url.Action("User", "Home")" class="dropdown-item">Thông tin cá nhân</a>
+                                        <a href="@Url.Action("Index", "Article", new {area = "Admin"})" class="dropdown-item">Trang Admin</a>
                                     </div>
                                 </div>
                             }
@@ -175,7 +175,8 @@
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle btn btn-primary ml-1 b-0" style="width: 40px; height: 38px; padding: 8px;" data-toggle="dropdown"><i class="fa fa-user-circle-o text-dark" aria-hidden="true"></i></a>
                                     <div class="dropdown-menu rounded-0 m-0">
-                                        <a href="@Url.Action("User", "Home")" class="dropdown-item"><i class="fa fa-user-circle-o text-dark" aria-hidden="true" style="margin-right: 5px"></i>Thông tin cá nhân</a>
+                                        <a href="@Url.Action("User", "Home")" class="dropdown-item">Thông tin cá nhân</a>
+                                        <a href="@Url.Action("ShowArticle", "User", new {area = "Admin"})" class="dropdown-item">Quản lý bài viết</a>
                                     </div>
                                 </div>
                             }

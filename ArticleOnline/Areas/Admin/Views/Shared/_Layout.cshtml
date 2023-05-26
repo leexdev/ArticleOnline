@@ -7,8 +7,10 @@
     var isCategoryActive = ViewContext.RouteData.Values["controller"].ToString() == "Category" && ViewContext.RouteData.Values["action"].ToString() == "Index";
     var isArticleActive = ViewContext.RouteData.Values["controller"].ToString() == "Article" && ViewContext.RouteData.Values["action"].ToString() == "Index";
     var isUserActive = ViewContext.RouteData.Values["controller"].ToString() == "User" && ViewContext.RouteData.Values["action"].ToString() == "Index";
+    var isUserActiveArticle = ViewContext.RouteData.Values["controller"].ToString() == "User" && ViewContext.RouteData.Values["action"].ToString() == "ShowArticle";
     string actionCurrent = ViewBag.ActionCurrent;
     string controllerCurrent = ViewBag.ControllerCurrent;
+    var role = Session["Role"] as string;
 }
 
 @if (Session["SuccessMessage"] != null)
@@ -18,9 +20,6 @@
     <script>
         var successMessage = "@Html.Raw(successMessage)";
         alert(successMessage);
-    </script>
-    <script>
-        window.location.href = "@Url.Action("Index", new { area = "Admin", timestamp = DateTime.Now.Ticks })";
     </script>
 }
 
@@ -61,7 +60,14 @@
             <div class="sidebar-header">
                 <a href="@Url.Action("Index", "Home", new { area = "" })">
                     <h3>
-                        <span style="font-size: medium;">Admin Dashboard</span>
+                        @if (role == "admin")
+                        {
+                            <span style="font-size: medium;">Admin Dashboard</span>
+                        }
+                        else
+                        {
+                            <span style="font-size: medium;">Quản lý bài viết</span>
+                        }
                     </h3>
                 </a>
             </div>
@@ -71,15 +77,24 @@
                         <i class="material-icons">grid_on</i>Danh mục
                     </a>
                     <ul class="collapse list-unstyled menu show" id="homeSubmenu6">
-                        <li class="@(isCategoryActive ? "active" : "")">
-                            <a href="@Url.Action("Index", "Category")">Quản lý thể loại</a>
-                        </li>
-                        <li class="@(isArticleActive ? "active" : "")">
-                            <a href="@Url.Action("Index", "Article")">Quản lý bài viết</a>
-                        </li>
-                        <li class="@(isUserActive ? "active" : "")">
-                            <a href="@Url.Action("Index", "User")">Quản lý người dùng</a>
-                        </li>
+                            @if (role == "admin")
+                            {
+                                <li class="@(isCategoryActive ? "active" : "")">
+                                    <a href="@Url.Action("Index", "Category")">Quản lý thể loại</a>
+                                </li>
+                                <li class="@(isArticleActive ? "active" : "")">
+                                    <a href="@Url.Action("Index", "Article")">Quản lý bài viết</a>
+                                </li>
+                                <li class="@(isUserActive ? "active" : "")">
+                                    <a href="@Url.Action("Index", "User")">Quản lý người dùng</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="@(isArticleActive ? "active" : "")">
+                                    <a href="@Url.Action("ShowArticle", "User")">Quản lý bài viết</a>
+                                </li>
+                            }
                         <!-- Các menu khác -->
                     </ul>
                 </li>
@@ -119,7 +134,6 @@
                             </div>
                         </div>
 
-
                         <div class="col-10 col-md-6 col-lg-8 order-1 order-md-3">
                             <div class="xp-profilebar text-right">
                                 <nav class="navbar p-0">
@@ -156,8 +170,15 @@
                     <div class="xp-breadcrumbbar text-center">
                         <h4 class="page-title">Dashboard</h4>
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Admin</a></li>
-                            <li class="breadcrumb-item active" aria-curent="page">Dashboard</li>
+                            @if (role == "admin")
+                            {
+                                <li class="breadcrumb-item"><a href="#">Admin</a></li>
+                                <li class="breadcrumb-item active" aria-curent="page">Dashboard</li>
+                            }
+                            else
+                            {
+                                <li class="breadcrumb-item active" aria-curent="page">Quản lý bài viết</li>
+                            }
                         </ol>
                     </div>
                 </div>

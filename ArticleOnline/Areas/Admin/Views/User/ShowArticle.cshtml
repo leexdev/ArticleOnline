@@ -1,0 +1,345 @@
+﻿@using PagedList;
+@using PagedList.Mvc;
+@model ArticleOnline.Models.ArticleManagementModel
+@using ArticleOnline.Helpers
+@using ArticleOnline.Controllers
+
+@{
+    ViewBag.Title = "Quản lý bài viết";
+    ViewBag.ActionCurrent = "ShowArticle";
+    ViewBag.ControllerCurrent = "User";
+    //var pager = Html.PagedListPager(Model.PagedArticles, page => Url.Action("Index", new { page, currentFilter = ViewBag.CurrentFilter }), PagedListRenderOptions.ClassicPlusFirstAndLast);
+    var pager = Model.PagedArticles;
+    int totalPages = (int)Math.Ceiling((double)pager.TotalItemCount / pager.PageSize);
+    int maxVisiblePages = 5; // Maximum number of visible page links
+
+    int startPage = Math.Max(1, pager.PageNumber - maxVisiblePages / 2);
+    int endPage = Math.Min(startPage + maxVisiblePages - 1, totalPages);
+
+    int itemsPerPage = pager.PageSize;
+
+    if (endPage - startPage + 1 < maxVisiblePages)
+    {
+        startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+    }
+}
+
+<div class="main-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-wrapper">
+                <div class="table-title">
+                    <div class="row">
+                        <div class="col-sm-6 p-0 flex justify-content-lg-start justify-content-center">
+                            <h2 class="ml-lg-2">Quản lý bài viết</h2>
+                        </div>
+                        <div class="col-sm-6 p-0 flex justify-content-lg-end justify-content-center">
+                            <a href="#addArticleModal" class="btn btn-success" data-toggle="modal">
+                                <i class="material-icons">&#xE147;</i>
+                                <span>Thêm</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.SelectedArticle.Avatar)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.SelectedArticle.Title)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.SelectedArticle.Description)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.SelectedArticle.AuthorId)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.SelectedArticle.CategoryId)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.SelectedArticle.PublishDate)
+                            </th>
+                            <th class="text-center">
+                                @Html.DisplayNameFor(model => model.SelectedArticle.ViewCount)
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var pagedArticle in Model.PagedArticles)
+                        {
+                            foreach (var article in pagedArticle.ListArticle)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <img src="@Url.Content(article.Avatar)" alt="Avatar" style="width: 120px; height: 110px;">
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.Title)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.Description)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.USER.DisplayName)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.Category.Name)
+                                    </td>
+                                    <td class="text-center">
+                                        @TimeHelper.FormatTimeAgo(article.PublishDate)
+                                    </td>
+                                    <td class="text-center">
+                                        @Html.DisplayFor(modelItem => article.ViewCount)
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <div class="mr-2">
+                                                <a href="#updateArticleModal" class="edit" data-toggle="modal" data-id="@article.Id" data-title="@article.Title" data-description="@article.Description" data-content="@article.Content" data-categoryid="@article.CategoryId" data-authorid="@article.AuthorId" data-publishdate="@article.PublishDate" data-viewcount="@article.ViewCount" data-avatar="@article.Avatar">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Sửa">&#xE254;</i>
+                                                </a>
+                                            </div>
+                                            <div class="mr-2">
+                                                <a href="@Url.Action("Detail", "Article", new { area = "", id = article.Id })" class="details" data-toggle="tooltip">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Chi tiết">&#xe88e;</i>
+                                                </a>
+                                            </div>
+                                            <div>
+                                                <a href="#deleteArticleModal" class="delete" data-toggle="modal" data-id="@article.Id">
+                                                    <i class="material-icons" data-toggle="tooltip" title="Xóa">&#xE872;</i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+                <div class="clearfix">
+                    <div class="hint-text">Hiển thị <b>@Model.PagedArticles.Count</b> trong số <b>@Model.ListArticle.Count</b></div>
+                    <ul class="pagination">
+                        @if (pager.HasPreviousPage)
+                        {
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Đầu</a>
+                            </li>
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = pager.PageNumber - 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Trước</a>
+                            </li>
+                        }
+
+                        @for (int pageNumber = startPage; pageNumber <= endPage; pageNumber++)
+                        {
+                            <li class="page-item @(pager.PageNumber == pageNumber ? "active" : "")">
+                                <a href="@Url.Action("Index", new { page = pageNumber, currentFilter = ViewBag.CurrentFilter })" class="page-link">@pageNumber</a>
+                            </li>
+                        }
+
+                        @if (pager.HasNextPage)
+                        {
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = pager.PageNumber + 1, currentFilter = ViewBag.CurrentFilter })" class="page-link">Tiếp</a>
+                            </li>
+                            <li class="page-item">
+                                <a href="@Url.Action("Index", new { page = totalPages, currentFilter = ViewBag.CurrentFilter })" class="page-link">Cuối</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                @using (Html.BeginForm("CreateArticle", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="modal fade" tabindex="-1" id="addArticleModal" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Đăng tin</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.CategoryId)
+                                        <div class="col-md-5">
+                                            @Html.DropDownListFor(model => model.Article.CategoryId, new SelectList(Model.ListCategory, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group d-lg-block d-md-inline d-sm-inline" style="margin-top: -85px; margin-left:50%">
+                                        <label class="d-flex">Ảnh đại diện</label>
+                                        <div class="col-md-5">
+                                            <input type="file" id="ImageUpLoad" class="mb-sm-3" name="ImageUpLoad" required />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Title)
+                                        <div class="col-md-12">
+                                            @Html.TextAreaFor(model => model.Article.Title, new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Description)
+                                        <div class="col-md-12">
+                                            @Html.TextAreaFor(model => model.Article.Description, new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Content)
+                                        <div class="col-md-12">
+                                            <textarea class="form-control ckeditor-content" name="Article.Content" id="inputContentCreate"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy bỏ</button>
+                                        <input type="submit" value="Thêm" class="btn btn-success">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @using (Html.BeginForm("EditArticle", "User", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="modal fade" tabindex="-1" id="updateArticleModal" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Sửa tin</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                @Html.HiddenFor(model => model.Article.Id)
+                                @Html.HiddenFor(model => model.Article.Avatar)
+
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.CategoryId)
+                                        <div class="col-md-5">
+                                            @Html.DropDownListFor(model => model.Article.CategoryId, new SelectList(Model.ListCategory, "Id", "Name"), "-- Chọn thể loại --", new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group d-lg-block d-md-inline d-sm-inline" style="margin-top: -85px; margin-left:50%">
+                                        @Html.LabelFor(model => model.Article.Avatar)
+                                        <div class="col-md-5">
+                                            <input type="file" id="ImageUpLoad" name="ImageUpLoad" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Title)
+                                        <div class="col-md-12">
+                                            @Html.TextAreaFor(model => model.Article.Title, new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Description)
+                                        <div class="col-md-12">
+                                            @Html.TextAreaFor(model => model.Article.Description, new { @class = "form-control", required = "required" })
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Article.Content)
+                                        <div class="col-md-12">
+                                            <textarea class="form-control ckeditor-content" name="Article.Content" id="inputContentEdit"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy bỏ</button>
+                                        <input type="submit" value="Sửa" class="btn btn-success">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div class="modal fade" tabindex="-1" id="deleteArticleModal" role="dialog">
+                    <div class="modal-dialog" role="document" style="max-width: 600px">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Xóa</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Bạn có muốn xóa bài viết này không?</p>
+                                <p class="text-warning"><small>Hành động này không được hoàn tác</small></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy bỏ</button>
+                                <form id="deleteForm" action="@Url.Action("DeleteArticle", "User")" method="post" enctype="multipart/form-data" style="padding-top: 15px">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" id="deleteId" value="" />
+                                    <button type="submit" class="btn btn-success">Xóa</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section DoanJS
+{
+    <script>
+        CKEDITOR.replace('inputContentCreate', {
+            filebrowserUploadUrl: '@Url.Action("UploadImage", "User", new { area = "Admin" })',
+            filebrowserImageUploadUrl: '@Url.Action("User", "User", new { area = "Admin" })'
+        });
+
+        CKEDITOR.replace('inputContentEdit', {
+            filebrowserUploadUrl: '@Url.Action("UploadImage", "User", new { area = "Admin" })',
+            filebrowserImageUploadUrl: '@Url.Action("UploadImage", "User", new { area = "Admin" })'
+        });
+
+        $(document).ready(function () {
+            $('.edit').click(function () {
+                var articleId = $(this).data('id');
+                var avatar = $(this).data('avatar');
+                var title = $(this).data('title');
+                var description = $(this).data('description');
+                var content = $(this).data('content');
+                var categoryId = $(this).data('categoryid');
+
+                $('#updateArticleModal #Article_Id').val(articleId);
+                $('#updateArticleModal #Article_Avatar').val(avatar);
+                $('#updateArticleModal #Article_Title').val(title);
+                $('#updateArticleModal #Article_Description').val(description);
+                $('#updateArticleModal #Article_CategoryId').val(categoryId);
+
+                CKEDITOR.instances.inputContentEdit.setData(content);
+            });
+        });
+
+        $(document).ready(function () {
+            // Lắng nghe sự kiện thay đổi lựa chọn thể loại
+            $('#updateArticleModal #Article_CategoryId').change(function () {
+                // Lấy giá trị mới của lựa chọn thể loại
+                var categoryId = $(this).val();
+
+                // Cập nhật giá trị của HiddenFor
+                $('#updateArticleModal #Article_CategoryId').val(categoryId);
+            });
+        });
+
+        $('.delete').click(function () {
+            var articleId = $(this).data('id');
+            $('#deleteId').val(articleId);
+        });
+    </script>
+}
