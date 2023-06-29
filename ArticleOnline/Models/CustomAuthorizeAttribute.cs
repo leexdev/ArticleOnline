@@ -29,5 +29,4 @@ namespace ArticleOnline.Models
             filterContext.Result = new HttpStatusCodeResult(HttpStatusCode.Forbidden);
         }
     }
-
 }

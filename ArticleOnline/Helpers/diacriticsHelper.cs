@@ -21,9 +21,7 @@ namespace ArticleOnline.Helpers
                     stringBuilder.Append(c);
                 }
             }
-
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
-
     }
 }

@@ -206,6 +206,7 @@ namespace ArticleOnline.Service
             db.Configuration.ValidateOnSaveEnabled = false;
             db.SaveChanges();
         }
+
         public void UpdateUser(USER User)
         {
             var existingUser = db.USERs.Find(User.Id);
